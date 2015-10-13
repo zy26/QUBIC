@@ -1,0 +1,66 @@
+---
+bibliography: bibliography.bib
+output:
+  pdf_document: default
+  html_document: default
+  word_document:
+    md_extensions: -autolink_bare_uris
+---
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{QUBIC vignette}
+-->
+
+QUBIC tutorial
+==============
+
+The `QUBIC` package is a biclustering package, with source code upgrading from C code to C++ code.
+The updated source code can avoid memory allocation error and is much efficient than the original one[@li09].
+Based on our preliminary analysis, it can save 40\% running time on a plant microarray data.
+
+## Other languages
+
+If R is not your thing, there is also a C version of [`QUBIC`](https://github.com/maqin2001/QUBIC).
+
+## Help 
+
+If you are having trouble with this R package, contact [the maintainer, Yu Zhang](mailto:zy26@jlu.edu.cn). 
+
+## Install and load
+
+Stable version from BioConductor
+
+
+```r
+source("https://bioconductor.org/biocLite.R")
+biocLite("QUBIC")
+```
+
+<!-- Or development version from GitHub
+
+
+```r
+install.packages("devtools")
+devtools::install_github("ropensci/alm")
+```
+-->
+Load `QUBIC`
+
+
+```{r, message=FALSE}
+library("QUBIC")
+```
+
+## Random matrix with embedded bicluster
+
+
+```{r}
+test <- matrix(rnorm(5000),100,50)
+test[11:20,11:20] <- rnorm(100,3,0.3)
+res<-biclust(test, method = BCQU())
+summary(res)
+show(res)
+names(attributes(res))
+```
+
+## References
