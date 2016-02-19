@@ -1,7 +1,6 @@
 #ifndef _STRUCT_H
 #define _STRUCT_H
 
-#include <cstdarg>
 #include <set>
 
 /* Two major data types */

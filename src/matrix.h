@@ -2,7 +2,7 @@
 #define MATRIX_H
 
 #include <vector>
-#include <string>
+#include <string> // std::string
 
 template<typename T> class Matrix {
 public:

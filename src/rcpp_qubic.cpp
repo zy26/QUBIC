@@ -1,19 +1,19 @@
-#include <csignal>
-#include <algorithm>
-#include <iostream>
-#include <list>
-#include <string>
-#include <vector>
-
-#include <Rcpp.h>
-
+#include "qubic.h"
 #include "config.h"
 #include "discretize.h"
 #include "edge_list.h"
 #include "fopen_matrix.h"
 #include "matrix_float.h"
 #include "option.h"
-#include "qubic.h"
+
+#include <Rcpp.h>
+
+#include <csignal>
+#include <algorithm>
+#include <iostream>
+#include <list>
+#include <string>
+#include <vector>
 
 using namespace Rcpp;
 
@@ -75,9 +75,8 @@ List from_blocks(const std::vector<Block> &blocks, const size_t nr, const size_t
            Named("info") = get_list());
 }
 
-//' @rdname QUBIC
 //' @backref src/rcpp_qubic.cpp
-// [[Rcpp::export]]
+// [[Rcpp::export(.qubic)]]
 List qubic(const NumericMatrix matrix, const short r, const double q,
            const double c, const int o, const double f, const int k,
            const bool P, const bool S, const bool C,
@@ -94,9 +93,8 @@ List qubic(const NumericMatrix matrix, const short r, const double q,
   return List::create(); // avoid warning
 }
 
-//' @rdname QUBIC
 //' @backref src/rcpp_qubic.cpp
-// [[Rcpp::export]]
+// [[Rcpp::export(.qubic_d)]]
 List qubic_d(const IntegerMatrix matrix,
              const double c, const int o, const double f, const int k,
              const bool P, const bool S, const bool C,
@@ -128,7 +126,7 @@ List qubic_d(const IntegerMatrix matrix,
 //'
 //' @name qudiscretize
 //'
-//' @aliases qudiscretize qdiscretize BCQU
+//' @aliases qudiscretize qdiscretize
 //'
 //' @examples
 //' # Qualitative discretize yeast microarray data

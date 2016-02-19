@@ -9,18 +9,18 @@
 #' @param groups An object that indicates which nodes belong together.
 #' @param method A character string indicating
 #' which correlation coefficient (or covariance) is to be computed.
-#' One of "pearson" (default), "kendall", or "spearman", can be abbreviated.
+#' One of 'pearson' (default), 'kendall', or 'spearman', can be abbreviated.
 #' @return a list contains a weights matrix and groupinfo
 #' @examples
 #' # Load microarray matrix
 #' data(BicatYeast)
 #' res<-biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
 #' # Constructing the networks for the 4th and 13th identified biclusters.
-#' net <- qunetwork(BicatYeast[1:50, ], res, number = c(4, 13), group = c(4, 13), method = "spearman")
+#' net <- qunetwork(BicatYeast[1:50, ], res, number = c(4, 13), group = c(4, 13), method = 'spearman')
 #' \dontrun{
-#' stopifnot(require("qgraph"))
-#' qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6,
-#'        color = cbind(rainbow(length(net[[2]]) - 1),"gray"), edge.label = FALSE)
+#' stopifnot(require('qgraph'))
+#' qgraph(net[[1]], groups = net[[2]], layout = 'spring', minimum = 0.6,
+#'        color = cbind(rainbow(length(net[[2]]) - 1),'gray'), edge.label = FALSE)
 #'
 #' }
 #' \dontrun{
@@ -29,15 +29,15 @@
 #' res<-biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
 #' # Constructing the networks for the 4th and 13th identified biclusters,
 #' #   using the whole network as a background.
-#' net <- qunetwork(BicatYeast[1:50, ], res, group = c(4, 13), method = "spearman")
-#' stopifnot(require("qgraph"))
-#' qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6,
-#'        color = cbind(rainbow(length(net[[2]]) - 1),"gray"), edge.label = FALSE)
+#' net <- qunetwork(BicatYeast[1:50, ], res, group = c(4, 13), method = 'spearman')
+#' stopifnot(require('qgraph'))
+#' qgraph(net[[1]], groups = net[[2]], layout = 'spring', minimum = 0.6,
+#'        color = cbind(rainbow(length(net[[2]]) - 1),'gray'), edge.label = FALSE)
 #' }
 #' @seealso \code{\link{qunet2xml}} \code{\link{QUBIC}} \code{\link{cor}}
-qunetwork <- function(x, BicRes, number = 1:BicRes@Number,
-                     groups = c(number[[1]]),
-                     method = c("pearson", "kendall", "spearman")) {
+qunetwork <-  function(x, BicRes, number = 1:BicRes@Number,
+                       groups = c(number[[1]]),
+                       method = c("pearson", "kendall", "spearman")) {
   if (length(number) < 1)
     stop("at least 1 bicluster needed.")
   if (is.null(rownames(x)))
@@ -60,18 +60,29 @@ qunetwork <- function(x, BicRes, number = 1:BicRes@Number,
   un <- x[allrownames, allcolnames]
   rowidlist <- list()
 
-  if (length(groups) != 2)
-    stop("length(group) != 2")
-  rowidlist[[paste(names(bics)[index[[1]]], " & ", names(bics)[index[[2]]], sep = "")]] <-
-    match(intersect(rownamelist[[index[[1]]]], rownamelist[[index[[2]]]]), rownames(un))
-  rowidlist[[names(bics)[index[[1]]]]] <-
-    match(setdiff(rownamelist[[index[[1]]]], rownamelist[[index[[2]]]]), rownames(un))
-  rowidlist[[names(bics)[index[[2]]]]] <-
-    match(setdiff(rownamelist[[index[[2]]]], rownamelist[[index[[1]]]]), rownames(un))
-  rowidlist[["Others"]] <-
-    match(setdiff(allrownames, union(rownamelist[[index[[1]]]], rownamelist[[index[[2]]]])), rownames(un))
+  if (length(groups) > 2)
+    stop("length(group) > 2")
+  if (length(groups) == 1) {
+    rowidlist[[names(bics)[index[[1]]]]] <-
+      match(rownamelist[[index[[1]]]],
+            rownames(un))
+  } else if (length(groups) == 2) {
+    rowidlist[[paste(names(bics)[index[[1]]], " & ", names(bics)[index[[2]]],
+                     sep = "")]] <-
+      match(intersect(rownamelist[[index[[1]]]], rownamelist[[index[[2]]]]),
+            rownames(un))
+    rowidlist[[names(bics)[index[[1]]]]] <-
+      match(setdiff(rownamelist[[index[[1]]]],
+                    rownamelist[[index[[2]]]]), rownames(un))
+    rowidlist[[names(bics)[index[[2]]]]] <-
+      match(setdiff(rownamelist[[index[[2]]]],
+                    rownamelist[[index[[1]]]]), rownames(un))
+    rowidlist[["Others"]] <-
+      match(setdiff(allrownames, union(rownamelist[[index[[1]]]],
+                                       rownamelist[[index[[2]]]])), rownames(un))
+  }
 
-  cort <- cor(t(un), method = method)
+  cort <- stats::cor(t(un), method = method)
 
   return(list(cort, rowidlist))
 }

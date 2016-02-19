@@ -12,8 +12,6 @@ typedef std::vector<discrete> Symbols;
 class DiscreteArrayListWithSymbols
 {
 public:
-  DiscreteArrayListWithSymbols();
-  ~DiscreteArrayListWithSymbols();
   DiscreteArrayList list;
   Symbols symbols;
 private:

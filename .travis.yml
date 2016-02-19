@@ -1,0 +1,6 @@
+language: r
+bioc_required: true
+cache: packages
+
+r_packages:
+  - nlme

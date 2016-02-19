@@ -8,7 +8,6 @@ namespace FstreamMatrix {
 
   namespace internal {
 #include <fstream>
-#include <sstream>
 #include <cassert> 
 
     template<typename T> Matrix<T> load_matrix_from_ifstream(std::ifstream &infile, size_t reserved_count) {

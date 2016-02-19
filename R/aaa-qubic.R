@@ -28,12 +28,12 @@
 #'
 #' @name QUBIC
 #'
-#' @aliases QUBIC qubic BCQU bcqu BCQU.d bcqu.d biclust method
-#'
+#' @aliases QUBIC qubic BCQU bcqu biclust,matrix,BCQU-method
+#' @param method \code{BCQU()} or \code{BCQUD()}, to perform QUBIC algorithm
 #' @param x the input data matrix, which could be the normalized gene expression matrix or its qualitative representation from Qdiscretization or other discretization ways.
 #' (for example: a qualitative representation of gene expression data) \cr
 #' For \code{BCQU()}, the data matrix should be real \cr
-#' For \code{BCQU.d()}, the data matrix should be discretized as integer.
+#' For \code{BCQUD()}, the data matrix should be discretized as integer.
 #' Zeros in the matrix will be treated as non-relevant value.
 #' @param r Affect the granularity of the biclusters. The range of possible ranks.
 #' A user can start with a small value of \code{r}
@@ -51,10 +51,10 @@
 #' @param f Control parameter, to control the level of overlaps between to-be-identified biclusters.
 #' The filter cut-off for data post-processing. For overlaps among to-be-identified biclusters.
 #' Its default value is set to \code{1} to ensure that no two reported biclusters overlap more than \code{f}.
-#' @param k The minimum column width of the block, minimum \code{2} columns.
+#' @param k The minimum column width of the block, minimum \code{max(ncol(x) \%/\% 20, 2)} columns.
 #' @param type The constrain type. \cr
-#' If \code{type} is omitted or \code{type="default"}, the original objective function in QUBIC will be used, which is to maximize the minimal value of numbers of rows and columns.
-#' If \code{type="area"}, the program tries to identify the bicluster with the maximal value of number of rows multiplied by number of columns.
+#' If \code{type} is omitted or \code{type='default'}, the original objective function in QUBIC will be used, which is to maximize the minimal value of numbers of rows and columns.
+#' If \code{type='area'}, the program tries to identify the bicluster with the maximal value of number of rows multiplied by number of columns.
 #' Other types are reserved for future use.
 #' @param P the flag to enlarge current bicluster using a \emph{p}-value contrain,
 #' which is defined based on its significance of expression consistency  comparing to some simulated submatrix. Default: \code{FALSE}.
@@ -63,7 +63,7 @@
 #' @param verbose If '\code{TRUE}', prints extra information on progress.
 #' @return Returns an Biclust object, which contains bicluster candidates
 #'
-#' @seealso \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}} \code{\link{biclust}}
+#' @seealso \code{\link{BCQU-class}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}} \code{\link{biclust}}
 #'
 #' @references Li G, Ma Q, Tang H, Paterson AH, Xu Y.
 #' QUBIC: a qualitative biclustering algorithm for analyses of gene expression data.
@@ -73,19 +73,12 @@
 #' \emph{PLoS ONE}. 2012;\bold{7(3)}:e32660. doi: 10.1371/journal.pone.0032660
 #'
 #' @keywords qubic biclust bicluster bi-cluster biclustering bi-clustering
-NULL
-
-#' \code{BCQU} performs a QUalitative BIClustering.
-#'
-#' @name BCQU
-#'
-#' @rdname QUBIC
 #'
 #' @examples
-#' # Random matrix with embedded bicluster
-#' test <- matrix(rnorm(5000),100,50)
-#' test[11:20,11:20] <- rnorm(100,3,0.3)
-#' res<-biclust(test, method = BCQU())
+#' # Random matrix with one embedded bicluster
+#' test <- matrix(rnorm(5000), 100, 50)
+#' test[11:20, 11:20] <- rnorm(100, 3, 0.3)
+#' res <- biclust(test, method = BCQU())
 #' summary(res)
 #' show(res)
 #' names(attributes(res))
@@ -97,8 +90,8 @@ NULL
 #' # Display number of column and row of BicatYeast
 #' ncol(BicatYeast)
 #' nrow(BicatYeast)
-#' #Bicluster on microarray matrix
-#' system.time(res<-biclust(BicatYeast, method=BCQU()))
+#' # Bicluster on microarray matrix
+#' system.time(res <- biclust(BicatYeast, method = BCQU()))
 #'
 #' # Show bicluster info
 #' res
@@ -118,26 +111,23 @@ NULL
 #' \dontrun{
 #' # Bicluster on selected of genes
 #' data(EisenYeast)
-#' genes <- c("YHR051W", "YKL181W", "YHR124W", "YHL020C", "YGR072W",
-#'            "YGR145W", "YGR218W", "YGL041C", "YOR202W", "YCR005C")
+#' genes <- c("YHR051W", "YKL181W", "YHR124W", "YHL020C", "YGR072W", "YGR145W",
+#'     "YGR218W", "YGL041C", "YOR202W", "YCR005C")
 #' # same result as res<-biclust(EisenYeast[1:10,], method=BCQU())
-#' res<-biclust(EisenYeast[genes,], method=BCQU())
+#' res <- biclust(EisenYeast[genes, ], method = BCQU())
 #' res
 #'
 #' }
 #' \dontrun{
 #' # Get bicluster by row name = 249364_at
-#' bicluster(BicatYeast, res, which(res@@RowxNumber[which(rownames(BicatYeast)=="249364_at"),]))
+#' bicluster(BicatYeast, res, which(res@@RowxNumber[which(rownames(BicatYeast) ==
+#'     "249364_at"), ]))
 #'
 #' }
 #' \dontrun{
 #' # Get bicluster by col name = cold_roots_6h
-#' bicluster(BicatYeast, res, which(res@@NumberxCol[,which(colnames(BicatYeast)=="cold_roots_6h")]))
-#'
-#' }
-#' \dontrun{
-#' #
-#' bicluster(BicatYeast, res, which(res@@NumberxCol[,which(colnames(BicatYeast)=="cold_roots_6h")]))
+#' bicluster(BicatYeast, res, which(res@@NumberxCol[, which(colnames(BicatYeast) ==
+#'     "cold_roots_6h")]))
 #'
 #' }
 #' \dontrun{
@@ -155,10 +145,10 @@ NULL
 #' bic10 <- bicluster(BicatYeast, res, 10)[[1]]
 #'
 #' # Draw heatmap of the 10th cluster using heatmap {stats}
-#' heatmap(as.matrix(t(bic10)), Rowv = NA, Colv = NA, scale = "none")
+#' heatmap(as.matrix(t(bic10)), Rowv = NA, Colv = NA, scale = 'none')
 #'
 #' # Draw heatmap of the 10th cluster using plot_heatmap {phyloseq}
-#' stopifnot(require("phyloseq"))
+#' stopifnot(require('phyloseq'))
 #' plot_heatmap(otu_table(bic10, taxa_are_rows = TRUE))
 #'
 #' }
@@ -166,7 +156,7 @@ NULL
 #' # Draw a single bicluster with original data background and color options
 #' data(BicatYeast)
 #' res <- biclust(BicatYeast, BCQU(), verbose = FALSE)
-#' palette <- colorRampPalette(c("red", "yellow", "green"))(n = 100)
+#' palette <- colorRampPalette(c('red', 'yellow', 'green'))(n = 100)
 #' # Draw heatmap of the first cluster with color
 #' drawHeatmap(BicatYeast, res, 1, FALSE, beamercolor = TRUE, paleta = palette)
 #'
@@ -192,29 +182,38 @@ NULL
 #' heatmapBC(x = BicatYeast, bicResult = res, number = 0)
 #'
 #' }
-setClass('BCQU',
-         contains = 'BiclustMethod',
-         prototype = prototype(
-           biclustFunction = function(x,...) {
-             .qubiclust(x,...)
-           }
-         ))
+NULL
+
+#' Class BCQU.
+#'
+#' Class \code{BCQU} define a QUalitative BIClustering calcuator.
+#'
+#' @name BCQU-class
+#' @rdname BCQU-class
+#' @seealso \code{\link{BCQU}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}} \code{\link{biclust}}
+
+setClass(Class = "BCQU", contains = "BiclustMethod", prototype = prototype(biclustFunction = function(x,
+                                                                                                      ...) {
+  .qubiclust(x, ...)
+}))
 
 #' @describeIn QUBIC Performs a QUalitative BIClustering.
-#' @usage ## S4 method for class 'matrix,BCQU':
-#' biclust(x, method = BCQU(), r = 1, q = 0.06, c = 0.95, o = 100, f = 1, k = 2,
-#'         type = "default", P = FALSE, C = FALSE, verbose = TRUE)
+#' @usage \S4method{biclust}{matrix,BCQU}(x, method = BCQU(),
+#'         r = 1, q = 0.06,
+#'         c = 0.95, o = 100, f = 1,
+#'         k = max(ncol(x) \%/\% 20, 2),
+#'         type = 'default', P = FALSE, C = FALSE, verbose = TRUE)
 BCQU <- function() {
-  return(new('BCQU'))
+  return(new("BCQU"))
 }
 
 #' QUBICD
 #'
-#' \code{BCQU.d} performs a QUalitative BIClustering for a discret matrix.
+#' \code{BCQUD} performs a QUalitative BIClustering for a discret matrix.
 #'
-#' @name BCQU.d-class
+#' @name BCQUD-class
 #'
-#' @aliases qubic_d QUBICD QUD BCQU.d-class biclust,matrix,BCQU.d-method
+#' @aliases qubic_d QUBICD QUD BCQUD-class biclust,matrix,BCQUD-method
 #'
 #' @rdname QUBIC
 #'
@@ -222,20 +221,18 @@ BCQU <- function() {
 #' # Biclustering of discretized yeast microarray data
 #' data(BicatYeast)
 #' disc<-qudiscretize(BicatYeast[1:10,1:10])
-#' biclust(disc, method=BCQU.d())
-setClass('BCQU.d',
-         contains = 'BiclustMethod',
-         prototype = prototype(
-           biclustFunction = function(x,...) {
-             .qubiclust_d(x,...)
-           }
-         ))
+#' biclust(disc, method=BCQUD())
+setClass("BCQUD", contains = "BiclustMethod", prototype = prototype(biclustFunction = function(x,
+                                                                                               ...) {
+  .qubiclust_d(x, ...)
+}))
 
 #' @describeIn QUBIC Performs a QUalitative BIClustering for a discret matrix.
 #'
-#' @usage ## S4 method for class 'matrix,BCQU.d':
-#' biclust(x, method = BCQU.d(), c = 0.95, o = 100, f = 1, k = 2,
-#'         type = "default", P = FALSE, C = FALSE, verbose = TRUE)
-BCQU.d <- function() {
-  return(new('BCQU.d'))
+#' @usage \S4method{biclust}{matrix,BCQUD}(x, method = BCQUD(),
+#'         c = 0.95, o = 100, f = 1,
+#'         k = max(ncol(x) \%/\% 20, 2),
+#'         type = 'default', P = FALSE, C = FALSE, verbose = TRUE)
+BCQUD <- function() {
+  return(new("BCQUD"))
 }

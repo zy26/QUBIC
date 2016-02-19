@@ -1,10 +1,8 @@
 #ifndef EDGE_LIST_H
 #define EDGE_LIST_H
 
-#include <cstddef> // size_t
-
 #include "discrete.h"
-#include "struct.h"
+#include <cstddef> // size_t
 
 /* edge between two genes */
 typedef struct Edge {

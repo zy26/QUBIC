@@ -1,9 +1,8 @@
 #include "charset.h"
 
-#include <climits>
+#include <climits> // SHRT_MAX
 #include <cstdio>
 #include <cstddef> // size_t
-
 
 discrete charset_add(std::vector<discrete> &ar, const discrete &s, discrete *bb) {
   /*A signed short can hold all the values between SHRT_MIN  and SHRT_MAX inclusive.SHRT_MIN is required to be -32767 or less,SHRT_MAX must be at least 32767*/

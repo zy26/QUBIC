@@ -1,10 +1,5 @@
 #include "struct.h"
 
-#include <cstdlib> // exit
-#include <cstdio>
-#include <cstring> // strcmp
-
-
 /* Return the number of common components between two arrays */
 int count_intersect(const std::set<int> & ds1, const std::set<int> & ds2) {
   int cnt = 0;
