@@ -5,6 +5,14 @@ QUBIC
 
 Authors: [Yu Zhang](mailto:zy26@jlu.edu.cn) and [Qin Ma](mailto:qin.ma@sdstate.edu)
 
+Type: R package
+
+Version: 0.99.2
+
+Desription
+------------
+This R package provides the implementation of the well-cited and well-reviewed QUBIC algorithm, which is a biclustering method.
+
 Installation
 ------------
 First, you will need to install at least the following packages from CRAN
