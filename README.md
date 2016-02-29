@@ -17,3 +17,7 @@ install.packages("devtools")
 
 devtools::install_github("zy26/QUBIC")
 ```
+
+Vignette
+------------
+You can find the vignette for QUBIC at https://github.com/zy26/QUBIC/blob/master/vignettes/qubic_vignette.Rmd
