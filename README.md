@@ -11,7 +11,7 @@ Version: 0.99.2
 
 Desription
 ------------
-This R package provides the implementation of the well-cited and well-reviewed QUBIC algorithm, which is a biclustering method.
+QUBIC is recognized as one of the best biclustering methods in terms of its efficiency and effetiveness in biological data interpretion. This package provides an R implementation of the QUBIC algorithm, with significantly improved efficiency and comprehensive functions. 
 
 Installation
 ------------
