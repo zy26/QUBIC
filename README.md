@@ -18,6 +18,8 @@ Installation
 First, you will need to install at least the following packages from CRAN
 ```{r}
 install.packages("biclust")
+install.packages("Rtools")
+install.packgaes("qgraph")
 ```
 To install the development version of QUBIC:
 ```{r}
