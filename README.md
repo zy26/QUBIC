@@ -21,7 +21,7 @@ install.packages("Rcpp")
 install.packgaes("qgraph")
 install.packages("RColorBrewer")
 ```
-For Windows users, Rtools(https://cran.r-project.org/bin/windows/Rtools/)should also be installed.
+For Windows users, Rtools(https://cran.r-project.org/bin/windows/Rtools/) should also be installed.
 
 To install the development version of QUBIC:
 ```{r}
