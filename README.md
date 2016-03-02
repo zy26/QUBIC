@@ -7,7 +7,6 @@ Authors: [Yu Zhang](mailto:zy26@jlu.edu.cn) and [Qin Ma](mailto:qin.ma@sdstate.e
 
 Type: R package
 
-Version: 0.99.2
 
 Desription
 ------------
@@ -18,8 +17,10 @@ Installation
 First, you will need to install at least the following packages from CRAN
 ```{r}
 install.packages("biclust")
-install.packages("Rtools")
+install.packages("Rcpp")
 install.packgaes("qgraph")
+install.packages("RColorBrewer")
+install.packages("Rtools")
 ```
 To install the development version of QUBIC:
 ```{r}
