@@ -18,8 +18,6 @@ First, you will need to install at least the following packages from CRAN:
 ```{r}
 install.packages("biclust")
 install.packages("Rcpp")
-install.packgaes("qgraph")
-install.packages("RColorBrewer")
 ```
 For Windows users, Rtools(https://cran.r-project.org/bin/windows/Rtools/) should also be installed.
 
