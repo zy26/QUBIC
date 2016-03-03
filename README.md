@@ -28,6 +28,12 @@ install.packages("devtools")
 devtools::install_github("zy26/QUBIC")
 ```
 
+To draw heatmap and visualize network, the following packages should also be installed:
+```{r}
+install.packages("qgraph")
+install.packages("RcolorBrewer")
+```
+
 Vignette
 ------------
 You can find the vignette for QUBIC at https://github.com/zy26/QUBIC/blob/master/vignettes/qubic_vignette.Rmd
