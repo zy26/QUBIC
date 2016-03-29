@@ -1,0 +1,366 @@
+---
+title: "QUBIC tutorial"
+author:
+- Yu Zhang
+- Qin Ma
+classoption: hyperref,
+output:
+  pdf_document:
+    fig_caption: yes
+    highlight: tango
+  html_document: default
+  word_document:
+    fig_caption: yes
+    fig_height: 5
+    fig_width: 5
+    highlight: tango
+    md_extensions: -autolink_bare_uris
+bibliography: bibliography.bib
+---
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{QUBIC vignette}
+-->
+
+```{r, echo=FALSE}
+#Sys.setenv(BIBINPUTS=getwd()); #Set correct path for bibliohraphy file #     citation_package: biblatex
+
+```
+
+Gene expression data is very important in experimental molecular biology [@brazma00], especially for cancer study [@fehrmann15]. The large-scale microarray data and RNA-seq data provide good opportunity to do the gene co-expression analyses and identify co-expressed gene modules; and the effective and efficient algorithms are needed to implement such analysis. Substantial efforts have been made in this field, such as @cheng00, Plaid [@lazzeroni02], Bayesian Biclustering (BCC) [@gu08], among them Cheng and Church and Plaid has the R package implementation. It is worth noting that our in-house biclustering algorithm, QUBIC @li09, is reviewed as one of the best programs in terms of their prediction performance on benchmark datasets. Most importantly, it is reviewed as the best one for large-scale real biological data [@eren12].
+
+Until now, QUBIC has been cited over 90 times (via Google Scholar) and its web server, QServer [@zhou12], was developed in 2012 to facilitate the users without comprehensive computational background [@zhou12]. In the past five years, the cost of RNA-sequencing decreased dramatically, and the amount of gene expression data keeps increasing. Upon requests from users and collaborators, we developed this R package of QUBIC to void submitting large data to a webserver.
+
+The unique features of our R package include (1) updated and more stable back-end resource code (re-written by C++), which has better memory control and is more efficient than the one published in 2009. For an input dataset in Arabidopsis, with 25,698 genes and 208 samples, we observed more than 40% time saving; and (2) comprehensive functions and examples, including discretize function, heatmap drawing and network analysis. 
+
+
+# Other languages
+
+If R is not your thing, there is also a C version of [`QUBIC`](https://github.com/maqin2001/QUBIC).
+
+# Help 
+
+If you are having trouble with this R package, contact [the maintainer, Yu Zhang](mailto:zy26@jlu.edu.cn). 
+
+# Install and load
+
+Stable version from BioConductor
+
+
+```r
+source("https://bioconductor.org/biocLite.R")
+biocLite("QUBIC")
+```
+
+<!-- Or development version from GitHub
+
+
+```r
+install.packages("devtools")
+devtools::install_github("ropensci/alm")
+```
+-->
+Load `QUBIC`
+
+
+```{r, message=FALSE}
+library("QUBIC")
+```
+
+Functions
+======================
+
+There are six functions provide by QUBIC package. 
+```qudiscretize()```creates a discrete matrix for a given gene expression matrix;
+```BCQU()```performs a qualitative biclustering for real matrix 
+```BCQU()```performs a qualitative biclustering for discretized matrix;
+```quheatmap()```can draw heatmap for singe bicluster or overlapped biclusters;
+```qunetwork()``` can automatically create co-expression networks based on the identified biclusters by QUBIC;
+```qunet2xml()```can convert the constructed co-expression networks into XGMML format for further network analysis in Cytoscape, Biomax and JNets. 
+The following examples illustrate how these functions work.
+
+# Example of a random matrix with two diferent embedded biclusters
+
+```{r quheatmap_function, echo = FALSE}
+
+quheatmap = function(x, bicResult, number = 1, showlabel = FALSE, col = c("#313695", 
+    "#4575B4", "#74ADD1", "#ABD9E9", "#E0F3F8", "#FFFFBF", "#FEE090", "#FDAE61", 
+    "#F46D43", "#D73027", "#A50026"), ...) {
+    if (length(number) > 2) 
+        stop("Only 1 or 2 numbers are supported.")
+    
+    b <- bicluster(x, bicResult, number)
+    
+    if (length(number) == 1) {
+        x2 <- b[[1]]
+        image(1:ncol(x2), 1:nrow(x2), t(x2[1:nrow(x2), 1:ncol(x2)])[, nrow(x2):1], 
+            col = col, axes = FALSE, ylab = "", xlab = "")
+        
+        title(paste("Bicluster ", number, " (size ", nrow(x2), "x", ncol(x2), ")"))
+        
+        if (showlabel) {
+            axis(side = 1, 1L:ncol(x2), labels = colnames(x2), las = 2, 
+                line = -0.5, tick = 0)
+            axis(side = 2, nrow(x2):1L, labels = rownames(x2), las = 2, 
+                line = -0.5, tick = 0)
+        }
+        
+        box()
+        
+        # add color legend using image.plot function
+        if (require("fields")) {
+            low <- floor(min(x2[1:nrow(x2), 1:ncol(x2)]))
+            up <- ceiling(max(x2[1:nrow(x2), 1:ncol(x2)]))
+            image.plot(zlim = c(low, up), legend.only = TRUE, horizontal = FALSE, 
+                col = col, ...)
+        } else {
+            warning("We need package fields to display legend")
+        }
+    } else if (length(number) == 2) {
+        heatmapBC(x = x, bicResult = bicResult, number = number, local = TRUE, 
+            col = col, ylab = "", xlab = "")
+        
+        number1 = number[[1]]
+        bicRows1 = which(res@RowxNumber[, number1])
+        bicCols1 = which(res@NumberxCol[number1, ])
+        
+        number2 = number[[2]]
+        bicRows2 = which(res@RowxNumber[, number2])
+        bicCols2 = which(res@NumberxCol[number2, ])
+        
+        rows = c(setdiff(bicRows1, bicRows2), intersect(bicRows1, bicRows2), 
+            setdiff(bicRows2, bicRows1))
+        cols = c(setdiff(bicCols1, bicCols2), intersect(bicCols1, bicCols2), 
+            setdiff(bicCols2, bicCols1))
+        
+        all = x[rows, cols]
+        
+        x1 = b[[1]]
+        x2 = b[[2]]
+        
+        if (showlabel) {
+            columnName <- colnames(all)
+            rowName <- rownames(all)
+            axis(1, at = 1:length(columnName), labels = columnName, las = 2, 
+                tick = 0, line = -0.5)
+            axis(2, at = length(rowName):1, labels = rowName, las = 1, 
+                tick = 0, line = -0.5)
+        }
+        
+        title(paste("Bicluster ", number[[1]], "( size ", nrow(x1), "x", 
+            ncol(x1), ")", "&", "Bicluster ", number[[2]], "( size ", nrow(x2), 
+            "x", ncol(x2), ")"), cex.main = 0.8)
+        
+        
+        if (require("fields")) {
+            low1 <- floor(min(x1[1:nrow(x1), 1:ncol(x1)]))
+            up1 <- ceiling(max(x1[1:nrow(x1), 1:ncol(x1)]))
+            low2 <- floor(min(x2[1:nrow(x2), 1:ncol(x2)]))
+            up2 <- ceiling(max(x2[1:nrow(x2), 1:ncol(x2)]))
+            low <- min(low1, low2)
+            up <- max(up1, up2)
+            image.plot(zlim = c(low, up), legend.only = TRUE, horizontal = FALSE, 
+                col = col, ...)
+        } else {
+            warning("We need package fields to display legend")
+        }
+    }
+}
+
+```
+
+
+```{r random, cahce = TRUE, message = FALSE, fig.cap = 'Heatmap for two overlapped biclusters in the simulated matrix'}
+library(QUBIC)
+set.seed(1)
+# Create a random matrix
+test <- matrix(rnorm(10000), 100, 100)
+colnames(test) <- paste("cond", 1:100, sep = "_")
+rownames(test) <- paste("gene", 1:100, sep = "_")
+
+# Discretization
+matrix1 <- test[1:7, 1:4]
+matrix1
+
+matrix2 <- qudiscretize(matrix1)
+matrix2
+
+# Fill bicluster blocks
+t1 <- runif(10, 0.8, 1)
+t2 <- runif(10, 0.8, 1) * (-1)
+t3 <- runif(10, 0.8, 1) * sample(c(-1, 1), 10, replace = TRUE)
+test[11:20, 11:20] <- t(rep(t1, 10) * rnorm(100, 3, 0.3))
+test[31:40, 31:40] <- t(rep(t2, 10) * rnorm(100, 3, 0.3))
+test[51:60, 51:60] <- t(rep(t3, 10) * rnorm(100, 3, 0.3))
+
+# QUBIC
+res <- biclust(test, method = BCQU())
+summary(res)
+
+# Show heatmap
+hmcols <- colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF", 
+    "#E0F3F8", "#91BFDB", "#4575B4")))(100)
+# Specify colors
+
+par(mar = c(4, 5, 3, 5) + 0.1)
+quheatmap(test, res, number = c(1, 3), col = hmcols, showlabel = TRUE)
+
+```
+
+# Example of BicatYeast
+
+```{r yeast, cache = TRUE}
+library(QUBIC)
+data(BicatYeast)
+
+# Discretization
+matrix1 <- BicatYeast[1:7, 1:4]
+matrix1
+
+matrix2 <- qudiscretize(matrix1)
+matrix2
+
+# QUBIC
+x <- BicatYeast
+system.time(res <- biclust(x, method = BCQU()))
+
+summary(res)
+```
+
+We can draw heatmap for single bicluster.
+
+```{r yeast heatmap, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the second bicluster identified in the BicatYeast data. The bicluster consists of 53 genes and 5 conditions', fig.show = 'asis'}
+
+# Draw heatmap of for the 2th bicluster identified in BicatYeast data
+
+library(RColorBrewer)
+paleta <- colorRampPalette(rev(brewer.pal(11, "RdYlBu")))(11)
+par(mar = c(5, 4, 3, 5) + 0.1, mgp = c(0, 1, 0), cex.lab = 1.1, cex.axis = 0.5, 
+    cex.main = 1.1)
+quheatmap(x, res, number = 2, showlabel = TRUE, col = paleta)
+
+```
+
+We can draw heatmap for overlapped biclusters.
+
+```{r yeast heatmap2, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the second and third biclusters identified in the BicatYeast data. Bicluster #2(topleft) consists of 53 genes and 5 conditions, and bicluster #3 (bottom right) consists of 37 genes and 7 conditions.', fig.show = 'asis'}
+
+# Draw for the 2th and 3th biclusters identified in BicatYeast data
+
+par(mar = c(5, 5, 5, 5), cex.lab = 1.1, cex.axis = 0.5, cex.main = 1.1)
+paleta <- colorRampPalette(rev(brewer.pal(11, "RdYlBu")))(11)
+quheatmap(x, res, number = c(2, 3), showlabel = TRUE, col = paleta)
+
+```
+
+We can draw network for single bicluster.
+
+```{r yeast network1, cache = TRUE, message = FALSE, fig.cap = 'Network for the second bicluster identified in the BicatYeast data.', fig.show = 'asis'}
+
+# Construct the network for the 2thidentified bicluster in BicatYeast
+net <- qunetwork(x, res, number = 2, group = 2, method = "spearman")
+stopifnot(require("qgraph"))
+qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
+    color = cbind(rainbow(length(net[[2]]) -  1), "gray"), edge.label = FALSE)
+
+```
+
+We can also draw network for overlapped biclusters
+
+```{r yeast network2, cache = TRUE, message = FALSE, fig.cap = 'Network for the second and third biclusters identified in the BicatYeast data.', fig.show = 'asis'}
+
+net <- qunetwork(x, res, number = c(2, 3), group = c(2, 3), method = "spearman")
+stopifnot(require("qgraph"))
+qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, legend.cex = 0.5, 
+    color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
+
+```
+
+```{r, results = 'hide'}
+# Output overlapping heatmap XML, could be used in other software such
+# as Cytoscape, Biomax or JNets
+qunet2xml(net, minimum = 0.6, color = cbind(rainbow(length(net[[2]]) - 
+    1), "gray"))
+# We can use Cytoscape, Biomax or JNets open file named
+# tempnetworkresult.gr
+```
+
+# Example of E.coli data
+
+The E.coli data consists of 4,297 genes and 466 conditions.QUBIC found 83 biclusters.
+
+```{r ecoli, cache = TRUE}
+library(QUBIC)
+
+# Load E.coli data
+x <- read.table("https://www.sdstate.edu/ps/research/bioinformatics/upload/ecoli_466_4297.txt", 
+    header = TRUE)
+
+# Convert data frame to matrix
+matrix.please <- function(x) {
+    m <- as.matrix(x[, -1])
+    rownames(m) <- x[, 1]
+    m
+}
+M <- matrix.please(x)
+
+# Discretization
+matrix1 <- M[1:7, 1:4]
+matrix1
+
+matrix2 <- qudiscretize(matrix1)
+matrix2
+
+# QUBIC
+res <- biclust(M, method = BCQU(), r = 1, q = 0.06, c = 0.95, o = 100, 
+    f = 0.25, k = max(ncol(M)%/%20, 2))
+system.time(res <- biclust(M, method = BCQU(), r = 1, q = 0.06, c = 0.95, 
+    o = 100, f = 0.25, k = max(ncol(M)%/%20, 2)))
+summary(res)
+
+```
+
+```{r ecoli heatmap, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the fifth bicluster identified in the E.coli data. The bicluster consists of 108 genes and 44 conditions', fig.show = 'asis'}
+
+# Draw heatmap for the 5th bicluster identified in E.coli data
+
+library(RColorBrewer)
+paleta <- colorRampPalette(rev(brewer.pal(11, "RdYlBu")))(11)
+par(mar = c(5, 4, 3, 5) + 0.1, mgp = c(0, 1, 0), cex.lab = 1.1, cex.axis = 0.5, 
+    cex.main = 1.1)
+quheatmap(M, res, number = 5, showlabel = TRUE, col = paleta)
+
+```
+
+```{r ecoli heatmap2, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the fourth and eighth biclusters identified in the E.coli data.Bicluster #4(topleft) consists of 51 genes and 94 conditions, and bicluster #8 (bottom right) consists of 44 genes and 37 conditions', fig.show = 'asis'}
+
+library(RColorBrewer)
+paleta <- colorRampPalette(rev(brewer.pal(11, "RdYlBu")))(11)
+par(mar = c(5, 4, 3, 5), cex.lab = 1.1, cex.axis = 0.5, cex.main = 1.1)
+quheatmap(M, res, number = c(4, 8), showlabel = TRUE, col = paleta)
+
+```
+
+```{r ecoli network, cache = TRUE, message = FALSE, fig.cap = 'Network for the fifth bicluster identified in the E.coli data.', fig.show = 'asis' }
+
+# construct the network for the 5th identified bicluster in E.coli data
+net <- qunetwork(M, res, number = 5, group = 5, method = "spearman")
+stopifnot(require("qgraph"))
+qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
+    color = cbind(rainbow(length(net[[2]]) - 1), "gray"), edge.label = FALSE)
+
+
+```
+
+```{r ecoli network2, cache = TRUE ,message = FALSE, fig.cap = 'Network for the fourth and eighth biclusters identified in the E.coli data.', fig.show = 'asis'}
+
+# construct the network for the 4th and 8th identified bicluster in
+# E.coli data
+net <- qunetwork(M, res, number = c(4, 8), group = c(4, 8), method = "spearman")
+stopifnot(require("qgraph"))
+qgraph(net[[1]], groups = net[[2]], legend.cex = 0.5, layout = "spring", 
+    minimum = 0.6, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
+
+```
+
+# References
