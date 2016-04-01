@@ -446,7 +446,7 @@ public:
   {
     if (verbose) fprintf(stdout, "\nQUBIC %s: greedy biclustering\n\n", VER);
     /* ensure enough searching space */
-    int SCH_BLOCK = std::max(2 * o, 1000);
+    int SCH_BLOCK = 2 * o;
     /* case 's': po.IS_SWITCH = true; */
     bool IS_pvalue = option.p;
     bool IS_area = option.s;

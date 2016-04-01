@@ -27,8 +27,8 @@ qunet2xml <- function(net, minimum = 0.6, color = cbind(grDevices::rainbow(lengt
   cat("\n")
   for (i in 1:length(net[[2]])) {
     for (j in net[[2]][[i]]) {
-      cat("  <node label=\"node ")
-      cat(j)
+      cat("  <node label=\"")
+      cat(rownames(net[[1]])[[j]])
       cat("\" id=\"")
       cat(j)
       cat("\"><graphics type=\"ELLIPSE\" fill=\"")
