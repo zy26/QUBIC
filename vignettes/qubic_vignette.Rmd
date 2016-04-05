@@ -105,7 +105,7 @@ test[31:40, 31:40] <- t(rep(t2, 10) * rnorm(100, 3, 0.3))
 test[51:60, 51:60] <- t(rep(t3, 10) * rnorm(100, 3, 0.3))
 
 # QUBIC
-res <- biclust(test, method = BCQU())
+res <- biclust::biclust(test, method = BCQU())
 summary(res)
 
 # Show heatmap
@@ -133,7 +133,7 @@ matrix2
 
 # QUBIC
 x <- BicatYeast
-system.time(res <- biclust(x, method = BCQU()))
+system.time(res <- biclust::biclust(x, method = BCQU()))
 
 summary(res)
 ```
@@ -223,9 +223,9 @@ matrix2 <- qudiscretize(matrix1)
 matrix2
 
 # QUBIC
-res <- biclust(M, method = BCQU(), r = 1, q = 0.06, c = 0.95, o = 100, 
+res <- biclust::biclust(M, method = BCQU(), r = 1, q = 0.06, c = 0.95, o = 100, 
     f = 0.25, k = max(ncol(M)%/%20, 2))
-system.time(res <- biclust(M, method = BCQU(), r = 1, q = 0.06, c = 0.95, 
+system.time(res <- biclust::biclust(M, method = BCQU(), r = 1, q = 0.06, c = 0.95, 
     o = 100, f = 0.25, k = max(ncol(M)%/%20, 2)))
 summary(res)
 

@@ -3,16 +3,16 @@
 #' This function can visualize the identifed biclusters using heatmap in support of overall expression pattern analysis,either for a single bicluster or two biclusters.
 #' @aliases quheatmap
 #' @param x The data matrix
-#' @param bicResult BiclustResult object
+#' @param bicResult biclust::BiclustResult object
 #' @param number which bicluster to be plotted
 #' @param col default: c("#313695", "#4575B4", "#74ADD1", "#ABD9E9", "#E0F3F8", "#FFFFBF", "#FEE090", "#FDAE61", "#F46D43", "#D73027", "#A50026")
 #' @param showlabel If TRUE, show the xlabel and ylabel
-#' @param ... Additional plot options
+#' @param ... Additional options in \code{fields::image.plot}
 #' @seealso \code{\link{qunet2xml}} \code{\link{QUBIC}} \code{\link{heatmapBC}}
 #' @examples
 #' # Load microarray matrix
 #' data(BicatYeast)
-#' res<-biclust(BicatYeast, method=BCQU(), verbose = FALSE)
+#' res <- biclust::biclust(BicatYeast, method=BCQU(), verbose = FALSE)
 #' # Draw heatmap for the 2th identified bicluster
 #' par(mar = c(5, 4, 3, 5) + 0.1, mgp = c(0, 1, 0), cex.lab = 1.1, cex.axis = 0.5, cex.main = 1.1)
 #' quheatmap(x = BicatYeast, res, number = 2, showlabel = TRUE)
@@ -27,36 +27,36 @@ quheatmap = function(x, bicResult, number = 1, showlabel = FALSE, col = c("#3136
     if (length(number) > 2)
         stop("Only 1 or 2 numbers are supported.")
 
-    b <- bicluster(x, bicResult, number)
+    b <- biclust::bicluster(x, bicResult, number)
 
     if (length(number) == 1) {
         x2 <- b[[1]]
-        image(1:ncol(x2), 1:nrow(x2), t(x2[1:nrow(x2), 1:ncol(x2)])[, nrow(x2):1],
+        graphics::image(1:ncol(x2), 1:nrow(x2), t(x2[1:nrow(x2), 1:ncol(x2)])[, nrow(x2):1],
             col = col, axes = FALSE, ylab = "", xlab = "")
 
-        title(paste("Bicluster ", number, " (size ", nrow(x2), "x", ncol(x2),
+        graphics::title(paste("Bicluster ", number, " (size ", nrow(x2), "x", ncol(x2),
             ")"))
 
         if (showlabel) {
-            axis(side = 1, 1L:ncol(x2), labels = colnames(x2), las = 2,
+            graphics::axis(side = 1, 1L:ncol(x2), labels = colnames(x2), las = 2,
                 line = -0.5, tick = 0)
-            axis(side = 2, nrow(x2):1L, labels = rownames(x2), las = 2,
+            graphics::axis(side = 2, nrow(x2):1L, labels = rownames(x2), las = 2,
                 line = -0.5, tick = 0)
         }
 
-        box()
+        graphics::box()
 
-        # add color legend using image.plot function
+        # add color legend using graphics::image.plot function
         if (requireNamespace("fields")) {
             low <- floor(min(x2[1:nrow(x2), 1:ncol(x2)]))
             up <- ceiling(max(x2[1:nrow(x2), 1:ncol(x2)]))
-            image.plot(zlim = c(low, up), legend.only = TRUE, horizontal = FALSE,
+            fields::image.plot(zlim = c(low, up), legend.only = TRUE, horizontal = FALSE,
                 col = col, ...)
         } else {
             warning("We need package fields to display legend")
         }
     } else if (length(number) == 2) {
-        heatmapBC(x = x, bicResult = bicResult, number = number, local = TRUE,
+        biclust::heatmapBC(x = x, bicResult = bicResult, number = number, local = TRUE,
             col = col, ylab = "", xlab = "")
 
         number1 = number[[1]]
@@ -80,13 +80,13 @@ quheatmap = function(x, bicResult, number = 1, showlabel = FALSE, col = c("#3136
         if (showlabel) {
             columnName <- colnames(all)
             rowName <- rownames(all)
-            axis(1, at = 1:length(columnName), labels = columnName, las = 2,
+            graphics::axis(1, at = 1:length(columnName), labels = columnName, las = 2,
                 tick = 0, line = -0.5)
-            axis(2, at = length(rowName):1, labels = rowName, las = 1,
+            graphics::axis(2, at = length(rowName):1, labels = rowName, las = 1,
                 tick = 0, line = -0.5)
         }
 
-        title(paste("Bicluster ", number[[1]], "( size ", nrow(x1), "x",
+        graphics::title(paste("Bicluster ", number[[1]], "( size ", nrow(x1), "x",
             ncol(x1), ")", "&", "Bicluster ", number[[2]], "( size ", nrow(x2),
             "x", ncol(x2), ")"), cex.main = 0.8)
 
@@ -94,7 +94,7 @@ quheatmap = function(x, bicResult, number = 1, showlabel = FALSE, col = c("#3136
         if (requireNamespace("fields")) {
             low <- floor(min(x[1:nrow(x), 1:ncol(x)]))
             up <- ceiling(max(x[1:nrow(x), 1:ncol(x)]))
-            image.plot(zlim = c(low, up), legend.only = TRUE, horizontal = FALSE,
+            fields::image.plot(zlim = c(low, up), legend.only = TRUE, horizontal = FALSE,
                 col = col, ...)
         } else {
             warning("We need package fields to display legend")

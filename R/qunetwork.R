@@ -4,7 +4,7 @@
 #' Three correlation methods, Pearson, Kendall and Spearman, are available for a user, facilitating different preferences in practical usage.
 #' @aliases Qnetwork network Qunetwork
 #' @param x The data matrix
-#' @param BicRes BiclustResult object
+#' @param BicRes biclust::BiclustResult object
 #' @param number Which bicluster to be plotted
 #' @param groups An object that indicates which nodes belong together.
 #' @param method A character string indicating
@@ -14,7 +14,7 @@
 #' @examples
 #' # Load microarray matrix
 #' data(BicatYeast)
-#' res<-biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
+#' res <- biclust::biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
 #' # Constructing the networks for the 4th and 13th identified biclusters.
 #' net <- qunetwork(BicatYeast[1:50, ], res, number = c(4, 13), group = c(4, 13), method = 'spearman')
 #' \dontrun{
@@ -26,7 +26,7 @@
 #' \dontrun{
 #' #Load microarray matrix
 #' data(BicatYeast)
-#' res<-biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
+#' res <- biclust::biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
 #' # Constructing the networks for the 4th and 13th identified biclusters,
 #' #   using the whole network as a background.
 #' net <- qunetwork(BicatYeast[1:50, ], res, group = c(4, 13), method = 'spearman')
@@ -44,7 +44,7 @@ qunetwork <-  function(x, BicRes, number = 1:BicRes@Number,
     stop("can not plot without rownames.")
   if (is.null(colnames(x)))
     stop("can not plot without colnames.")
-  bics <- bicluster(x, BicRes, number)
+  bics <- biclust::bicluster(x, BicRes, number)
   index <- which(number %in% groups)
 
   rownamelist <- list()

@@ -111,7 +111,7 @@ where I and J are subsets of genes and conditions, respectively.
 # Random matrix with one embedded bicluster
 test <- matrix(rnorm(5000), 100, 50)
 test[11:20, 11:20] <- rnorm(100, 3, 0.3)
-res <- biclust(test, method = BCQU())
+res <- biclust::biclust(test, method = BCQU())
 summary(res)
 show(res)
 names(attributes(res))
@@ -124,17 +124,17 @@ data(BicatYeast)
 ncol(BicatYeast)
 nrow(BicatYeast)
 # Bicluster on microarray matrix
-system.time(res <- biclust(BicatYeast, method = BCQU()))
+system.time(res <- biclust::biclust(BicatYeast, method = BCQU()))
 
 # Show bicluster info
 res
 # Show the first bicluster
-bicluster(BicatYeast, res, 1)
+biclust::bicluster(BicatYeast, res, 1)
 # Get the 4th bicluster
-bic4 <- bicluster(BicatYeast, res, 4)[[1]]
+bic4 <- biclust::bicluster(BicatYeast, res, 4)[[1]]
 
 # or
-bic4 <- bicluster(BicatYeast, res)[[4]]
+bic4 <- biclust::bicluster(BicatYeast, res)[[4]]
 # Show rownames of the 4th bicluster
 rownames(bic4)
 # Show colnames of the 4th bicluster
@@ -146,27 +146,27 @@ colnames(bic4)
 data(EisenYeast)
 genes <- c("YHR051W", "YKL181W", "YHR124W", "YHL020C", "YGR072W", "YGR145W",
     "YGR218W", "YGL041C", "YOR202W", "YCR005C")
-# same result as res<-biclust(EisenYeast[1:10,], method=BCQU())
-res <- biclust(EisenYeast[genes, ], method = BCQU())
+# same result as res <- biclust::biclust(EisenYeast[1:10,], method=BCQU())
+res <- biclust::biclust(EisenYeast[genes, ], method = BCQU())
 res
 
 }
 \dontrun{
 # Get bicluster by row name = 249364_at
-bicluster(BicatYeast, res, which(res@RowxNumber[which(rownames(BicatYeast) ==
+biclust::bicluster(BicatYeast, res, which(res@RowxNumber[which(rownames(BicatYeast) ==
     "249364_at"), ]))
 
 }
 \dontrun{
 # Get bicluster by col name = cold_roots_6h
-bicluster(BicatYeast, res, which(res@NumberxCol[, which(colnames(BicatYeast) ==
+biclust::bicluster(BicatYeast, res, which(res@NumberxCol[, which(colnames(BicatYeast) ==
     "cold_roots_6h")]))
 
 }
 \dontrun{
 # Draw a single bicluster using drawHeatmap {bicust}
 data(BicatYeast)
-res <- biclust(BicatYeast, BCQU(), verbose = FALSE)
+res <- biclust::biclust(BicatYeast, BCQU(), verbose = FALSE)
 # Draw heatmap of the first cluster
 drawHeatmap(BicatYeast, res, 1)
 
@@ -174,8 +174,8 @@ drawHeatmap(BicatYeast, res, 1)
 \dontrun{
 # Draw a single bicluster using heatmap {stats}
 data(BicatYeast)
-res <- biclust(BicatYeast, BCQU(), verbose = FALSE)
-bic10 <- bicluster(BicatYeast, res, 10)[[1]]
+res <- biclust::biclust(BicatYeast, BCQU(), verbose = FALSE)
+bic10 <- biclust::bicluster(BicatYeast, res, 10)[[1]]
 
 # Draw heatmap of the 10th cluster using heatmap {stats}
 heatmap(as.matrix(t(bic10)), Rowv = NA, Colv = NA, scale = 'none')
@@ -188,7 +188,7 @@ plot_heatmap(otu_table(bic10, taxa_are_rows = TRUE))
 \dontrun{
 # Draw a single bicluster with original data background and color options
 data(BicatYeast)
-res <- biclust(BicatYeast, BCQU(), verbose = FALSE)
+res <- biclust::biclust(BicatYeast, BCQU(), verbose = FALSE)
 palette <- colorRampPalette(c('red', 'yellow', 'green'))(n = 100)
 # Draw heatmap of the first cluster with color
 drawHeatmap(BicatYeast, res, 1, FALSE, beamercolor = TRUE, paleta = palette)
@@ -197,28 +197,28 @@ drawHeatmap(BicatYeast, res, 1, FALSE, beamercolor = TRUE, paleta = palette)
 \dontrun{
 # Draw some overlapped biclusters
 data(BicatYeast)
-res <- biclust(BicatYeast, BCQU(), verbose = FALSE)
+res <- biclust::biclust(BicatYeast, BCQU(), verbose = FALSE)
 biclusternumber(res, 1)
 biclusternumber(res, 3)
 # Draw overlapping heatmap
-heatmapBC(x = BicatYeast, bicResult = res, number = c(1, 3), local = TRUE)
+biclust::heatmapBC(x = BicatYeast, bicResult = res, number = c(1, 3), local = TRUE)
 
 }
 \dontrun{
 # Draw all the biclusters
 data(BicatYeast)
-res <- biclust(BicatYeast, BCQU(), verbose = FALSE)
+res <- biclust::biclust(BicatYeast, BCQU(), verbose = FALSE)
 # Draw the first bicluster on heatmap
-heatmapBC(x = BicatYeast, bicResult = res, number = 1)
+biclust::heatmapBC(x = BicatYeast, bicResult = res, number = 1)
 # Draw all the biclusters, not working well.
 # Overlap plotting only works for two neighbor bicluster defined by the order in the number slot.
-heatmapBC(x = BicatYeast, bicResult = res, number = 0)
+biclust::heatmapBC(x = BicatYeast, bicResult = res, number = 0)
 
 }
 # Biclustering of discretized yeast microarray data
 data(BicatYeast)
 disc<-qudiscretize(BicatYeast[1:10,1:10])
-biclust(disc, method=BCQUD())
+biclust::biclust(disc, method=BCQUD())
 }
 \references{
 Li G, Ma Q, Tang H, Paterson AH, Xu Y.

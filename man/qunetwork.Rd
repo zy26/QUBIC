@@ -13,7 +13,7 @@ qunetwork(x, BicRes, number = 1:BicRes@Number, groups = c(number[[1]]),
 \arguments{
 \item{x}{The data matrix}
 
-\item{BicRes}{BiclustResult object}
+\item{BicRes}{biclust::BiclustResult object}
 
 \item{number}{Which bicluster to be plotted}
 
@@ -33,7 +33,7 @@ Three correlation methods, Pearson, Kendall and Spearman, are available for a us
 \examples{
 # Load microarray matrix
 data(BicatYeast)
-res<-biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
+res <- biclust::biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
 # Constructing the networks for the 4th and 13th identified biclusters.
 net <- qunetwork(BicatYeast[1:50, ], res, number = c(4, 13), group = c(4, 13), method = 'spearman')
 \dontrun{
@@ -45,7 +45,7 @@ qgraph(net[[1]], groups = net[[2]], layout = 'spring', minimum = 0.6,
 \dontrun{
 #Load microarray matrix
 data(BicatYeast)
-res<-biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
+res <- biclust::biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
 # Constructing the networks for the 4th and 13th identified biclusters,
 #   using the whole network as a background.
 net <- qunetwork(BicatYeast[1:50, ], res, group = c(4, 13), method = 'spearman')

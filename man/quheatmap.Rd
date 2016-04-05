@@ -11,7 +11,7 @@ quheatmap(x, bicResult, number = 1, showlabel = FALSE, col = c("#313695",
 \arguments{
 \item{x}{The data matrix}
 
-\item{bicResult}{BiclustResult object}
+\item{bicResult}{biclust::BiclustResult object}
 
 \item{number}{which bicluster to be plotted}
 
@@ -19,7 +19,7 @@ quheatmap(x, bicResult, number = 1, showlabel = FALSE, col = c("#313695",
 
 \item{col}{default: c("#313695", "#4575B4", "#74ADD1", "#ABD9E9", "#E0F3F8", "#FFFFBF", "#FEE090", "#FDAE61", "#F46D43", "#D73027", "#A50026")}
 
-\item{...}{Additional plot options}
+\item{...}{Additional options in \code{fields::image.plot}}
 }
 \description{
 This function can visualize the identifed biclusters using heatmap in support of overall expression pattern analysis,either for a single bicluster or two biclusters.
@@ -27,7 +27,7 @@ This function can visualize the identifed biclusters using heatmap in support of
 \examples{
 # Load microarray matrix
 data(BicatYeast)
-res<-biclust(BicatYeast, method=BCQU(), verbose = FALSE)
+res <- biclust::biclust(BicatYeast, method=BCQU(), verbose = FALSE)
 # Draw heatmap for the 2th identified bicluster
 par(mar = c(5, 4, 3, 5) + 0.1, mgp = c(0, 1, 0), cex.lab = 1.1, cex.axis = 0.5, cex.main = 1.1)
 quheatmap(x = BicatYeast, res, number = 2, showlabel = TRUE)

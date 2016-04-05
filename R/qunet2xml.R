@@ -8,7 +8,7 @@
 #' @examples
 #' # Load microarray matrix
 #' data(BicatYeast)
-#' res<-biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
+#' res <- biclust::biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
 #' # Get all biclusters
 #' net <- qunetwork(BicatYeast[1:50, ], res, group = c(4, 13), method = 'spearman')
 #' # Save the network to a XGMML file
