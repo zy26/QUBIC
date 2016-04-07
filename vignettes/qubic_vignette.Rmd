@@ -18,15 +18,6 @@ output:
 bibliography: bibliography.bib
 ---
 
-%\VignetteEngine{knitr::rmarkdown}
-%\VignetteIndexEntry{QUBIC vignette}
-
-
-```{r, echo=FALSE}
-#Sys.setenv(BIBINPUTS=getwd()); #Set correct path for bibliohraphy file #     citation_package: biblatex
-
-```
-
 Gene expression data is very important in experimental molecular biology [@brazma00], especially for cancer study [@fehrmann15]. The large-scale microarray data and RNA-seq data provide good opportunity to do the gene co-expression analyses and identify co-expressed gene modules; and the effective and efficient algorithms are needed to implement such analysis. Substantial efforts have been made in this field, such as @cheng00, Plaid [@lazzeroni02], Bayesian Biclustering (BCC) [@gu08], among them Cheng and Church and Plaid has the R package implementation. It is worth noting that our in-house biclustering algorithm, QUBIC @li09, is reviewed as one of the best programs in terms of their prediction performance on benchmark datasets. Most importantly, it is reviewed as the best one for large-scale real biological data [@eren12].
 
 Until now, QUBIC has been cited over 90 times (via Google Scholar) and its web server, QServer [@zhou12], was developed in 2012 to facilitate the users without comprehensive computational background [@zhou12]. In the past five years, the cost of RNA-sequencing decreased dramatically, and the amount of gene expression data keeps increasing. Upon requests from users and collaborators, we developed this R package of QUBIC to void submitting large data to a webserver.
@@ -154,7 +145,7 @@ quheatmap(x, res, number = 2, showlabel = TRUE, col = paleta)
 
 We can draw heatmap for overlapped biclusters.
 
-```{r yeast heatmap2, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the second and third biclusters identified in the BicatYeast data. Bicluster #2(topleft) consists of 53 genes and 5 conditions, and bicluster #3 (bottom right) consists of 37 genes and 7 conditions.', fig.show = 'asis'}
+```{r yeast heatmap2, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the second and third biclusters identified in the BicatYeast data. Bicluster #2 (topleft) consists of 53 genes and 5 conditions, and bicluster #3 (bottom right) consists of 37 genes and 7 conditions.', fig.show = 'asis'}
 
 # Draw for the 2th and 3th biclusters identified in BicatYeast data
 
@@ -170,20 +161,20 @@ We can draw network for single bicluster.
 
 # Construct the network for the 2thidentified bicluster in BicatYeast
 net <- qunetwork(x, res, number = 2, group = 2, method = "spearman")
-stopifnot(require("qgraph"))
-qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
-    color = cbind(rainbow(length(net[[2]]) -  1), "gray"), edge.label = FALSE)
+if(require("qgraph"))
+    qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
+        color = cbind(rainbow(length(net[[2]]) -  1), "gray"), edge.label = FALSE)
 
 ```
 
-We can also draw network for overlapped biclusters
+We can also draw network for overlapped biclusters.
 
 ```{r yeast network2, cache = TRUE, message = FALSE, fig.cap = 'Network for the second and third biclusters identified in the BicatYeast data.', fig.show = 'asis'}
 
 net <- qunetwork(x, res, number = c(2, 3), group = c(2, 3), method = "spearman")
-stopifnot(require("qgraph"))
-qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, legend.cex = 0.5, 
-    color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
+if(require("qgraph"))
+    qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, legend.cex = 0.5, 
+        color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
 
 ```
 
@@ -198,35 +189,28 @@ qunet2xml(net, minimum = 0.6, color = cbind(rainbow(length(net[[2]]) -
 
 # Example of E.coli data
 
-The E.coli data consists of 4,297 genes and 466 conditions.QUBIC found 83 biclusters.
+The E.coli data consists of 4,297 genes and 466 conditions.
+QUBIC found 20 biclusters.
 
 ```{r ecoli, cache = TRUE}
 library(QUBIC)
 
 # Load E.coli data
-x <- read.table("https://www.sdstate.edu/ps/research/bioinformatics/upload/ecoli_466_4297.txt", 
-    header = TRUE)
-
-# Convert data frame to matrix
-matrix.please <- function(x) {
-    m <- as.matrix(x[, -1])
-    rownames(m) <- x[, 1]
-    m
-}
-M <- matrix.please(x)
+library(QUBICdata)
+data("ecoli")
 
 # Discretization
-matrix1 <- M[1:7, 1:4]
+matrix1 <- ecoli[1:7, 1:4]
 matrix1
 
 matrix2 <- qudiscretize(matrix1)
 matrix2
 
 # QUBIC
-res <- biclust::biclust(M, method = BCQU(), r = 1, q = 0.06, c = 0.95, o = 100, 
-    f = 0.25, k = max(ncol(M)%/%20, 2))
-system.time(res <- biclust::biclust(M, method = BCQU(), r = 1, q = 0.06, c = 0.95, 
-    o = 100, f = 0.25, k = max(ncol(M)%/%20, 2)))
+res <- biclust::biclust(ecoli, method = BCQU(), r = 1, q = 0.06, c = 0.95, o = 100, 
+    f = 0.25, k = max(ncol(ecoli)%/%20, 2))
+system.time(res <- biclust::biclust(ecoli, method = BCQU(), r = 1, q = 0.06, c = 0.95, 
+    o = 100, f = 0.25, k = max(ncol(ecoli)%/%20, 2)))
 summary(res)
 
 ```
@@ -239,38 +223,37 @@ library(RColorBrewer)
 paleta <- colorRampPalette(rev(brewer.pal(11, "RdYlBu")))(11)
 par(mar = c(5, 4, 3, 5) + 0.1, mgp = c(0, 1, 0), cex.lab = 1.1, cex.axis = 0.5, 
     cex.main = 1.1)
-quheatmap(M, res, number = 5, showlabel = TRUE, col = paleta)
+quheatmap(ecoli, res, number = 5, showlabel = TRUE, col = paleta)
 
 ```
 
-```{r ecoli heatmap2, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the fourth and eighth biclusters identified in the E.coli data.Bicluster #4(topleft) consists of 51 genes and 94 conditions, and bicluster #8 (bottom right) consists of 44 genes and 37 conditions', fig.show = 'asis'}
+```{r ecoli heatmap2, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the fourth and eighth biclusters identified in the E.coli data.Bicluster #4 (topleft) consists of 51 genes and 94 conditions, and bicluster #8 (bottom right) consists of 44 genes and 37 conditions', fig.show = 'asis'}
 
 library(RColorBrewer)
 paleta <- colorRampPalette(rev(brewer.pal(11, "RdYlBu")))(11)
 par(mar = c(5, 4, 3, 5), cex.lab = 1.1, cex.axis = 0.5, cex.main = 1.1)
-quheatmap(M, res, number = c(4, 8), showlabel = TRUE, col = paleta)
+quheatmap(ecoli, res, number = c(4, 8), showlabel = TRUE, col = paleta)
 
 ```
 
 ```{r ecoli network, cache = TRUE, message = FALSE, fig.cap = 'Network for the fifth bicluster identified in the E.coli data.', fig.show = 'asis' }
 
 # construct the network for the 5th identified bicluster in E.coli data
-net <- qunetwork(M, res, number = 5, group = 5, method = "spearman")
-stopifnot(require("qgraph"))
-qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
-    color = cbind(rainbow(length(net[[2]]) - 1), "gray"), edge.label = FALSE)
+net <- qunetwork(ecoli, res, number = 5, group = 5, method = "spearman")
+if(require("qgraph"))
+    qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
+        color = cbind(rainbow(length(net[[2]]) - 1), "gray"), edge.label = FALSE)
 
 
 ```
 
 ```{r ecoli network2, cache = TRUE ,message = FALSE, fig.cap = 'Network for the fourth and eighth biclusters identified in the E.coli data.', fig.show = 'asis'}
 
-# construct the network for the 4th and 8th identified bicluster in
-# E.coli data
-net <- qunetwork(M, res, number = c(4, 8), group = c(4, 8), method = "spearman")
-stopifnot(require("qgraph"))
-qgraph(net[[1]], groups = net[[2]], legend.cex = 0.5, layout = "spring", 
-    minimum = 0.6, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
+# construct the network for the 4th and 8th identified bicluster in E.coli data
+net <- qunetwork(ecoli, res, number = c(4, 8), group = c(4, 8), method = "spearman")
+if(require("qgraph"))
+    qgraph(net[[1]], groups = net[[2]], legend.cex = 0.5, layout = "spring", 
+        minimum = 0.6, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
 
 ```
 
