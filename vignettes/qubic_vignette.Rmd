@@ -2,6 +2,7 @@
 title: "QUBIC tutorial"
 author:
 - Yu Zhang
+- Juan Xie
 - Qin Ma
 classoption: hyperref,
 output:
@@ -62,12 +63,13 @@ Functions
 ======================
 
 There are six functions provide by QUBIC package. 
-```qudiscretize()```creates a discrete matrix for a given gene expression matrix;
-```BCQU()```performs a qualitative biclustering for real matrix 
-```BCQU()```performs a qualitative biclustering for discretized matrix;
-```quheatmap()```can draw heatmap for singe bicluster or overlapped biclusters;
-```qunetwork()``` can automatically create co-expression networks based on the identified biclusters by QUBIC;
-```qunet2xml()```can convert the constructed co-expression networks into XGMML format for further network analysis in Cytoscape, Biomax and JNets. 
+
+* ```qudiscretize()```creates a discrete matrix for a given gene expression matrix;
+* ```BCQU()```performs a qualitative biclustering for real matrix;
+* ```BCQUD()```performs a qualitative biclustering for discretized matrix;
+* ```quheatmap()```can draw heatmap for singe bicluster or overlapped biclusters;
+* ```qunetwork()``` can automatically create co-expression networks based on the identified biclusters by QUBIC;
+* ```qunet2xml()```can convert the constructed co-expression networks into XGMML format for further network analysis in Cytoscape, Biomax and JNets. 
 The following examples illustrate how these functions work.
 
 # Example of a random matrix with two diferent embedded biclusters
@@ -133,7 +135,7 @@ We can draw heatmap for single bicluster.
 
 ```{r yeast heatmap, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the second bicluster identified in the BicatYeast data. The bicluster consists of 53 genes and 5 conditions', fig.show = 'asis'}
 
-# Draw heatmap of for the 2th bicluster identified in BicatYeast data
+# Draw heatmap for the 2th bicluster identified in BicatYeast data
 
 library(RColorBrewer)
 paleta <- colorRampPalette(rev(brewer.pal(11, "RdYlBu")))(11)
@@ -159,7 +161,7 @@ We can draw network for single bicluster.
 
 ```{r yeast network1, cache = TRUE, message = FALSE, fig.cap = 'Network for the second bicluster identified in the BicatYeast data.', fig.show = 'asis'}
 
-# Construct the network for the 2thidentified bicluster in BicatYeast
+# Construct the network for the 2th identified bicluster in BicatYeast
 net <- qunetwork(x, res, number = 2, group = 2, method = "spearman")
 if(require("qgraph"))
     qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
@@ -173,24 +175,23 @@ We can also draw network for overlapped biclusters.
 
 net <- qunetwork(x, res, number = c(2, 3), group = c(2, 3), method = "spearman")
 if(require("qgraph"))
-    qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, legend.cex = 0.5, 
-        color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
+    qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
+        legend.cex = 0.5, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
 
 ```
 
-```{r, results = 'hide'}
+```r
 # Output overlapping heatmap XML, could be used in other software such
 # as Cytoscape, Biomax or JNets
-qunet2xml(net, minimum = 0.6, color = cbind(rainbow(length(net[[2]]) - 
-    1), "gray"))
-# We can use Cytoscape, Biomax or JNets open file named
-# tempnetworkresult.gr
+sink('tempnetworkresult.gr')
+qunet2xml(net, minimum = 0.6, color = cbind(rainbow(length(net[[2]]) - 1), "gray"))
+sink()
+# We can use Cytoscape, Biomax or JNets open file named 'tempnetworkresult.gr'
 ```
 
 # Example of E.coli data
 
 The E.coli data consists of 4,297 genes and 466 conditions.
-QUBIC found 20 biclusters.
 
 ```{r ecoli, cache = TRUE}
 library(QUBIC)
@@ -227,7 +228,7 @@ quheatmap(ecoli, res, number = 5, showlabel = TRUE, col = paleta)
 
 ```
 
-```{r ecoli heatmap2, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the fourth and eighth biclusters identified in the E.coli data.Bicluster #4 (topleft) consists of 51 genes and 94 conditions, and bicluster #8 (bottom right) consists of 44 genes and 37 conditions', fig.show = 'asis'}
+```{r ecoli heatmap2, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the fourth and eighth biclusters identified in the E.coli data.Bicluster #4 (topleft) consists of 108 genes and 44 conditions, and bicluster #8 (bottom right) consists of 26 genes and 33 conditions', fig.show = 'asis'}
 
 library(RColorBrewer)
 paleta <- colorRampPalette(rev(brewer.pal(11, "RdYlBu")))(11)

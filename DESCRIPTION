@@ -2,13 +2,10 @@ Package: QUBIC
 Type: Package
 Title: An R package for qualitative biclustering in support of gene
         co-expression analyses
-Version: 0.99.5
+Version: 0.99.6
 Authors@R: c(person("Yu", "Zhang", role = c("aut", "cre"), email = "zy26@jlu.edu.cn"),
              person("Qin", "Ma", role = "aut", email = "qin.ma@sdstate.edu"))
-Author: Yu Zhang <zy26@jlu.edu.cn>,
-    Qin Ma <qin.ma@sdstate.edu>
-Maintainer: Yu Zhang <zy26@jlu.edu.cn>
-Depends: biclust, R (>= 3.2)
+Depends: R (>= 3.2), biclust
 Suggests: QUBICdata, rmarkdown, fields, RColorBrewer, qgraph
 Description: The core function of this R package is to provide the
     implementation of the well-cited and well-reviewed QUBIC algorithm, aiming to
@@ -22,10 +19,10 @@ Description: The core function of this R package is to provide the
     coefficient scores between a pair of genes are provided; and (iv) a generalize
     output format of biclusters and corresponding network can be freely downloaded
     so that a user can easily do following comprehensive functional enrichment
-    analysis (e.g. DAVID) and advanced network visualization (e.g. cytoscape).
+    analysis (e.g. DAVID) and advanced network visualization (e.g. Cytoscape).
 URL: http://github.com/zy26/QUBIC
 BugReports: http://github.com/zy26/QUBIC/issues
-License: CC BY-NC-ND 4.0
+License: CC BY-NC-ND 4.0 + file LICENSE
 Imports: Rcpp (>= 0.11.0), methods
 LinkingTo: Rcpp
 SystemRequirements: C++11, Rtools (>= 3.1)
