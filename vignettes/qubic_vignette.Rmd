@@ -1,5 +1,5 @@
 ---
-title: "QUBIC tutorial"
+title: "QUBIC Tutorial"
 author:
 - Yu Zhang
 - Juan Xie
@@ -9,7 +9,9 @@ output:
   pdf_document:
     fig_caption: yes
     highlight: tango
-  html_document: default
+  html_document:
+    theme: flatly
+    highlight: tango
   word_document:
     fig_caption: yes
     fig_height: 5
@@ -18,6 +20,10 @@ output:
     md_extensions: -autolink_bare_uris
 bibliography: bibliography.bib
 ---
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{QUBIC Tutorial}
+-->
 
 Gene expression data is very important in experimental molecular biology [@brazma00], especially for cancer study [@fehrmann15]. The large-scale microarray data and RNA-seq data provide good opportunity to do the gene co-expression analyses and identify co-expressed gene modules; and the effective and efficient algorithms are needed to implement such analysis. Substantial efforts have been made in this field, such as @cheng00, Plaid [@lazzeroni02], Bayesian Biclustering (BCC) [@gu08], among them Cheng and Church and Plaid has the R package implementation. It is worth noting that our in-house biclustering algorithm, QUBIC @li09, is reviewed as one of the best programs in terms of their prediction performance on benchmark datasets. Most importantly, it is reviewed as the best one for large-scale real biological data [@eren12].
 
@@ -62,7 +68,7 @@ library("QUBIC")
 Functions
 ======================
 
-There are six functions provide by QUBIC package. 
+There are six functions provided by QUBIC package. 
 
 * ```qudiscretize()```creates a discrete matrix for a given gene expression matrix;
 * ```BCQU()```performs a qualitative biclustering for real matrix;
@@ -163,7 +169,7 @@ We can draw network for single bicluster.
 
 # Construct the network for the 2th identified bicluster in BicatYeast
 net <- qunetwork(x, res, number = 2, group = 2, method = "spearman")
-if(require("qgraph"))
+if (require("qgraph"))
     qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
         color = cbind(rainbow(length(net[[2]]) -  1), "gray"), edge.label = FALSE)
 
@@ -174,7 +180,7 @@ We can also draw network for overlapped biclusters.
 ```{r yeast network2, cache = TRUE, message = FALSE, fig.cap = 'Network for the second and third biclusters identified in the BicatYeast data.', fig.show = 'asis'}
 
 net <- qunetwork(x, res, number = c(2, 3), group = c(2, 3), method = "spearman")
-if(require("qgraph"))
+if (require("qgraph"))
     qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
         legend.cex = 0.5, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
 
@@ -197,8 +203,19 @@ The E.coli data consists of 4,297 genes and 466 conditions.
 library(QUBIC)
 
 # Load E.coli data
-library(QUBICdata)
-data("ecoli")
+if (require("QUBICdata")) {
+    data("ecoli")
+} else {
+    warning("Could not load QUBICdata. Bioconductor version <= 3.2? ", call. = FALSE)
+    print("Downloading fallback file.")
+    x <- read.table(
+        "https://www.sdstate.edu/ps/research/bioinformatics/upload/ecoli_466_4297.txt", 
+        header = TRUE)
+
+    # Convert data frame to matrix
+    ecoli <- as.matrix(x[, -1])
+    rownames(ecoli) <- x[, 1]
+}
 
 # Discretization
 matrix1 <- ecoli[1:7, 1:4]
@@ -216,7 +233,7 @@ summary(res)
 
 ```
 
-```{r ecoli heatmap, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the fifth bicluster identified in the E.coli data. The bicluster consists of 108 genes and 44 conditions', fig.show = 'asis'}
+```{r ecoli heatmap, cache = TRUE, message = FALSE, fig.cap = 'Heatmap for the fifth bicluster identified in the E.coli data. The bicluster consists of 103 genes and 38 conditions', fig.show = 'asis'}
 
 # Draw heatmap for the 5th bicluster identified in E.coli data
 
@@ -241,7 +258,7 @@ quheatmap(ecoli, res, number = c(4, 8), showlabel = TRUE, col = paleta)
 
 # construct the network for the 5th identified bicluster in E.coli data
 net <- qunetwork(ecoli, res, number = 5, group = 5, method = "spearman")
-if(require("qgraph"))
+if (require("qgraph"))
     qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
         color = cbind(rainbow(length(net[[2]]) - 1), "gray"), edge.label = FALSE)
 
@@ -252,7 +269,7 @@ if(require("qgraph"))
 
 # construct the network for the 4th and 8th identified bicluster in E.coli data
 net <- qunetwork(ecoli, res, number = c(4, 8), group = c(4, 8), method = "spearman")
-if(require("qgraph"))
+if (require("qgraph"))
     qgraph(net[[1]], groups = net[[2]], legend.cex = 0.5, layout = "spring", 
         minimum = 0.6, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
 
