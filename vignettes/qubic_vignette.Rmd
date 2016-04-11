@@ -5,6 +5,9 @@ author:
 - Juan Xie
 - Qin Ma
 classoption: hyperref,
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{QUBIC Tutorial}
 output:
   pdf_document:
     fig_caption: yes
@@ -20,12 +23,8 @@ output:
     md_extensions: -autolink_bare_uris
 bibliography: bibliography.bib
 ---
-<!--
-%\VignetteEngine{knitr::rmarkdown}
-%\VignetteIndexEntry{QUBIC Tutorial}
--->
 
-Gene expression data is very important in experimental molecular biology [@brazma00], especially for cancer study [@fehrmann15]. The large-scale microarray data and RNA-seq data provide good opportunity to do the gene co-expression analyses and identify co-expressed gene modules; and the effective and efficient algorithms are needed to implement such analysis. Substantial efforts have been made in this field, such as @cheng00, Plaid [@lazzeroni02], Bayesian Biclustering (BCC) [@gu08], among them Cheng and Church and Plaid has the R package implementation. It is worth noting that our in-house biclustering algorithm, QUBIC @li09, is reviewed as one of the best programs in terms of their prediction performance on benchmark datasets. Most importantly, it is reviewed as the best one for large-scale real biological data [@eren12].
+Gene expression data is very important in experimental molecular biology [@brazma00], especially for cancer study [@fehrmann15]. The large-scale microarray data and RNA-seq data provide good opportunity to do the gene co-expression analyses and identify co-expressed gene modules; and the effective and efficient algorithms are needed to implement such analysis. Substantial efforts have been made in this field, such as @cheng00, Plaid [@lazzeroni02], Bayesian Biclustering (BCC) [@gu08], among them Cheng and Church and Plaid has the R package implementation. It is worth noting that our in-house biclustering algorithm, QUBIC [@li09], is reviewed as one of the best programs in terms of their prediction performance on benchmark datasets. Most importantly, it is reviewed as the best one for large-scale real biological data [@eren12].
 
 Until now, QUBIC has been cited over 90 times (via Google Scholar) and its web server, QServer [@zhou12], was developed in 2012 to facilitate the users without comprehensive computational background [@zhou12]. In the past five years, the cost of RNA-sequencing decreased dramatically, and the amount of gene expression data keeps increasing. Upon requests from users and collaborators, we developed this R package of QUBIC to void submitting large data to a webserver.
 
@@ -169,8 +168,8 @@ We can draw network for single bicluster.
 
 # Construct the network for the 2th identified bicluster in BicatYeast
 net <- qunetwork(x, res, number = 2, group = 2, method = "spearman")
-if (require("qgraph"))
-    qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
+if (requireNamespace("qgraph"))
+    qgraph::qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
         color = cbind(rainbow(length(net[[2]]) -  1), "gray"), edge.label = FALSE)
 
 ```
@@ -180,8 +179,8 @@ We can also draw network for overlapped biclusters.
 ```{r yeast network2, cache = TRUE, message = FALSE, fig.cap = 'Network for the second and third biclusters identified in the BicatYeast data.', fig.show = 'asis'}
 
 net <- qunetwork(x, res, number = c(2, 3), group = c(2, 3), method = "spearman")
-if (require("qgraph"))
-    qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
+if (requireNamespace("qgraph"))
+    qgraph::qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
         legend.cex = 0.5, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
 
 ```
@@ -203,8 +202,8 @@ The E.coli data consists of 4,297 genes and 466 conditions.
 library(QUBIC)
 
 # Load E.coli data
-if (require("QUBICdata")) {
-    data("ecoli")
+if (requireNamespace("QUBICdata")) {
+    data("ecoli", package = "QUBICdata")
 } else {
     warning("Could not load QUBICdata. Bioconductor version <= 3.2? ", call. = FALSE)
     print("Downloading fallback file.")
@@ -258,8 +257,8 @@ quheatmap(ecoli, res, number = c(4, 8), showlabel = TRUE, col = paleta)
 
 # construct the network for the 5th identified bicluster in E.coli data
 net <- qunetwork(ecoli, res, number = 5, group = 5, method = "spearman")
-if (require("qgraph"))
-    qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
+if (requireNamespace("qgraph"))
+    qgraph::qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
         color = cbind(rainbow(length(net[[2]]) - 1), "gray"), edge.label = FALSE)
 
 
@@ -269,8 +268,8 @@ if (require("qgraph"))
 
 # construct the network for the 4th and 8th identified bicluster in E.coli data
 net <- qunetwork(ecoli, res, number = c(4, 8), group = c(4, 8), method = "spearman")
-if (require("qgraph"))
-    qgraph(net[[1]], groups = net[[2]], legend.cex = 0.5, layout = "spring", 
+if (requireNamespace("qgraph"))
+    qgraph::qgraph(net[[1]], groups = net[[2]], legend.cex = 0.5, layout = "spring", 
         minimum = 0.6, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
 
 ```

@@ -37,8 +37,8 @@ res <- biclust::biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
 # Constructing the networks for the 4th and 13th identified biclusters.
 net <- qunetwork(BicatYeast[1:50, ], res, number = c(4, 13), group = c(4, 13), method = 'spearman')
 \dontrun{
-stopifnot(require('qgraph'))
-qgraph(net[[1]], groups = net[[2]], layout = 'spring', minimum = 0.6,
+if (requireNamespace('qgraph'))
+    qgraph::qgraph(net[[1]], groups = net[[2]], layout = 'spring', minimum = 0.6,
        color = cbind(rainbow(length(net[[2]]) - 1),'gray'), edge.label = FALSE)
 
 }
@@ -49,8 +49,8 @@ res <- biclust::biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
 # Constructing the networks for the 4th and 13th identified biclusters,
 #   using the whole network as a background.
 net <- qunetwork(BicatYeast[1:50, ], res, group = c(4, 13), method = 'spearman')
-stopifnot(require('qgraph'))
-qgraph(net[[1]], groups = net[[2]], layout = 'spring', minimum = 0.6,
+if (requireNamespace('qgraph'))
+    qgraph::qgraph(net[[1]], groups = net[[2]], layout = 'spring', minimum = 0.6,
        color = cbind(rainbow(length(net[[2]]) - 1),'gray'), edge.label = FALSE)
 }
 }

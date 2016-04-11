@@ -135,7 +135,7 @@
 #' data(BicatYeast)
 #' res <- biclust::biclust(BicatYeast, BCQU(), verbose = FALSE)
 #' # Draw heatmap of the first cluster
-#' drawHeatmap(BicatYeast, res, 1)
+#' biclust::drawHeatmap(BicatYeast, res, 1)
 #'
 #' }
 #' \dontrun{
@@ -148,8 +148,8 @@
 #' heatmap(as.matrix(t(bic10)), Rowv = NA, Colv = NA, scale = 'none')
 #'
 #' # Draw heatmap of the 10th cluster using plot_heatmap {phyloseq}
-#' stopifnot(require('phyloseq'))
-#' plot_heatmap(otu_table(bic10, taxa_are_rows = TRUE))
+#' if (requireNamespace('phyloseq'))
+#'     phyloseq::plot_heatmap(otu_table(bic10, taxa_are_rows = TRUE))
 #'
 #' }
 #' \dontrun{
@@ -158,7 +158,7 @@
 #' res <- biclust::biclust(BicatYeast, BCQU(), verbose = FALSE)
 #' palette <- colorRampPalette(c('red', 'yellow', 'green'))(n = 100)
 #' # Draw heatmap of the first cluster with color
-#' drawHeatmap(BicatYeast, res, 1, FALSE, beamercolor = TRUE, paleta = palette)
+#' biclust::drawHeatmap(BicatYeast, res, 1, FALSE, beamercolor = TRUE, paleta = palette)
 #'
 #' }
 #' \dontrun{
