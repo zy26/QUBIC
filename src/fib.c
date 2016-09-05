@@ -57,8 +57,7 @@ ceillog2(unsigned int a)
     if (a >= (unsigned int)(1 << b)) {
       a /= (1 << b);
       i = i | 1;
-    }
-    else
+    } else
       a &= (1 << b) - 1;
     b /= 2;
   }
@@ -189,8 +188,7 @@ struct fibheap *
       fh_destroyheap(ha);
       free(ha);
       return hb;
-    }
-    else {
+    } else {
       fh_destroyheap(hb);
       free(hb);
       return ha;
@@ -371,7 +369,6 @@ fh_extractmin(struct fibheap *h)
 #ifndef NO_FREE
     fhe_destroy(z);
 #endif
-
   }
 
   return ret;
@@ -561,8 +558,7 @@ fh_cascading_cut(struct fibheap *h, struct fibheap_el *y)
     if (y->fhe_mark == 0) {
       y->fhe_mark = 1;
       return;
-    }
-    else {
+    } else {
       fh_cut(h, y, z);
       y = z;
     }
@@ -605,8 +601,7 @@ fhe_insertafter(struct fibheap_el *a, struct fibheap_el *b)
     a->fhe_left = b;
     b->fhe_right = a;
     b->fhe_left = a;
-  }
-  else {
+  } else {
     b->fhe_right = a->fhe_right;
     a->fhe_right->fhe_left = b;
     a->fhe_right = b;
@@ -657,7 +652,7 @@ fh_checkcons(struct fibheap *h)
       h->fh_Dl = 8;
     if (oDl != h->fh_Dl)
       h->fh_cons = (struct fibheap_el **)realloc(h->fh_cons,
-      sizeof *h->fh_cons * (h->fh_Dl + 1));
+        sizeof *h->fh_cons * (h->fh_Dl + 1));
     // [zy]
     //if (h->fh_cons == NULL)
       //abort();
@@ -674,8 +669,7 @@ fh_compare(struct fibheap *h, struct fibheap_el *a, struct fibheap_el *b)
     if (a->fhe_key == b->fhe_key)
       return 0;
     return 1;
-  }
-  else
+  } else
     return h->fh_cmp_fnct(a->fhe_data, b->fhe_data);
 }
 
@@ -706,5 +700,4 @@ fh_insertel(struct fibheap *h, struct fibheap_el *x)
     h->fh_maxn = h->fh_n;
   h->fh_ninserts++;
 #endif
-
 }

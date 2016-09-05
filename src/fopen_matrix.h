@@ -3,26 +3,25 @@
 
 #include "matrix.h"
 
-#include <cassert> 
+#include <cassert>
 #include <cstdio>
 #include <cstring>
 
 namespace FopenMatrix {
   namespace internal {
-
 #define MAX_LINE 100000
 #define LABEL_LEN 64
 
-    void fscanf2(FILE *file, short *x);
+    int fscanf2(FILE *file, short *x);
 
-    void fscanf2(FILE *file, int *x);
+    int fscanf2(FILE *file, int *x);
 
-    void fscanf2(FILE *file, float *x);
+    int fscanf2(FILE *file, float *x);
 
-    void fscanf2(FILE *file, double *x);
+    int fscanf2(FILE *file, double *x);
 
     template<typename T>
-    Matrix<T> load_matrix_from_file(FILE *fp, size_t reserved_count, bool ignore_first) {
+    Matrix<T> load_matrix_from_file(FILE *fp, std::size_t reserved_count, bool ignore_first) {
       Matrix<T> matrix(reserved_count); // RVO
 
       char line[MAX_LINE];
@@ -41,7 +40,7 @@ namespace FopenMatrix {
       while (1 == fscanf(fp, "%s", value)) {
         matrix.row_names.push_back(value);
         std::vector<T> line_data(matrix.col_names.size());
-        for (size_t i = 0; i < matrix.col_names.size(); i++) {
+        for (std::size_t i = 0; i < matrix.col_names.size(); i++) {
           fscanf2(fp, &line_data[i]);
         }
         matrix.data.emplace_back(line_data);
@@ -51,7 +50,7 @@ namespace FopenMatrix {
     }
   }
 
-  template<typename T> Matrix<T> load_matrix(const char* file_name, size_t reserved_count, bool ignore_first = true) {
+  template<typename T> Matrix<T> load_matrix(const char* file_name, std::size_t reserved_count, bool ignore_first = true) {
     FILE *fp = fopen(file_name, "r");
     if (NULL == fp) {
       printf("Failed to open '%s'", file_name);

@@ -1,6 +1,4 @@
 useDynLib(QUBIC)
 exportPattern("^[[:alpha:]]+")
 importFrom(Rcpp, evalCpp)
-importFrom(biclust, biclust)
-importFrom(biclust, bicluster)
-importFrom(biclust, BiclustResult)
+importFrom(biclust, biclust, bicluster)
