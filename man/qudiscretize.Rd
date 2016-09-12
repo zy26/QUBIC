@@ -31,10 +31,10 @@ The default value of \code{q} is \code{0.06} in QUBIC
 A qualitative discrete matrix
 }
 \description{
-\code{qudiscretize} delivers a discret matrix. It is useful if we just want to get a discretized matrix.
+\code{qudiscretize} delivers a discrete matrix. It is useful if we just want to get a discretized matrix.
 }
 \details{
-\code{qudiscretize} convert a given gene expression matrix to a discret matrix.
+\code{qudiscretize} convert a given gene expression matrix to a discrete matrix.
 It's implimented in C++, providing a increase in speed over the C equivalent.
 }
 \examples{

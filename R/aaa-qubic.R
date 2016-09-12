@@ -56,11 +56,13 @@
 #' If \code{type} is omitted or \code{type='default'}, the original objective function in QUBIC will be used, which is to maximize the minimal value of numbers of rows and columns.
 #' If \code{type='area'}, the program tries to identify the bicluster with the maximal value of number of rows multiplied by number of columns.
 #' Other types are reserved for future use.
-#' @param P the flag to enlarge current bicluster using a \emph{p}-value contrain,
+#' @param P The flag to enlarge current bicluster using a \emph{p}-value contrain,
 #' which is defined based on its significance of expression consistency  comparing to some simulated submatrix. Default: \code{FALSE}.
-#' @param C the flag to set the lower bound of the condition number in a bicluster as 5\% of the total condition number in the input data.
+#' @param C The flag to set the lower bound of the condition number in a bicluster as 5\% of the total condition number in the input data.
 #' Only suggested to use when the input data has a few conditions (e.g. less than \code{20}). Default: \code{FALSE}.
 #' @param verbose If '\code{TRUE}', prints extra information on progress.
+#' @param weight Alternative weight matrix provided by user, will append to default weight. \code{o}, \code{f}, \code{k}, \code{P}, \code{type}, \code{C} will be ignored if using this parameter.
+#' @param seedbicluster Seed provided by user, normally should be a result of function \code{biclust}.
 #' @return Returns an Biclust object, which contains bicluster candidates
 #'
 #' @seealso \code{\link{BCQU-class}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}} \code{\link{biclust}}
@@ -192,9 +194,9 @@ NULL
 #' @rdname BCQU-class
 #' @seealso \code{\link{BCQU}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}} \code{\link{biclust}}
 
-setClass(Class = "BCQU", contains = "BiclustMethod", prototype = prototype(biclustFunction = function(x,
-                                                                                                      ...) {
-  .qubiclust(x, ...)
+setClass(Class = "BCQU", contains = "BiclustMethod",
+         prototype = prototype(biclustFunction = function(x, ...) {
+  qubiclust(x, ...)
 }))
 
 #' @describeIn QUBIC Performs a QUalitative BIClustering.
@@ -202,9 +204,18 @@ setClass(Class = "BCQU", contains = "BiclustMethod", prototype = prototype(biclu
 #'         r = 1, q = 0.06,
 #'         c = 0.95, o = 100, f = 1,
 #'         k = max(ncol(x) \%/\% 20, 2),
-#'         type = 'default', P = FALSE, C = FALSE, verbose = TRUE)
-BCQU <- function() {
-  return(methods::new("BCQU"))
+#'         type = 'default', P = FALSE, C = FALSE, verbose = TRUE,
+#'         weight = NULL, seedbicluster = NULL)
+BCQU <- function(x = NULL, r = 1, q = 0.06, c = 0.95, o = 100, f = 1,
+                 k = max(ncol(x) %/% 20, 2),
+                 type = 'default', P = FALSE, C = FALSE, verbose = TRUE,
+                 weight = NULL, seedbicluster = NULL) {
+  if (is.null(x)) return(methods::new("BCQU"))
+  res <- biclust(x = x, method = BCQU(), r = r, q = q, c = c, o = o, f = f,
+                        k = k, type = type, P = P, C = C, verbose = verbose,
+                        weight = weight, seedbicluster = seedbicluster)
+  res@Parameters$Call = match.call()
+  return(res)
 }
 
 #' QUBICD
@@ -222,9 +233,9 @@ BCQU <- function() {
 #' data(BicatYeast)
 #' disc<-qudiscretize(BicatYeast[1:10,1:10])
 #' biclust::biclust(disc, method=BCQUD())
-setClass("BCQUD", contains = "BiclustMethod", prototype = prototype(biclustFunction = function(x,
-                                                                                               ...) {
-  .qubiclust_d(x, ...)
+setClass("BCQUD", contains = "BiclustMethod",
+         prototype = prototype(biclustFunction = function(x, ...) {
+  qubiclust_d(x, ...)
 }))
 
 #' @describeIn QUBIC Performs a QUalitative BIClustering for a discret matrix.
@@ -232,7 +243,16 @@ setClass("BCQUD", contains = "BiclustMethod", prototype = prototype(biclustFunct
 #' @usage \S4method{biclust}{matrix,BCQUD}(x, method = BCQUD(),
 #'         c = 0.95, o = 100, f = 1,
 #'         k = max(ncol(x) \%/\% 20, 2),
-#'         type = 'default', P = FALSE, C = FALSE, verbose = TRUE)
-BCQUD <- function() {
-  return(methods::new("BCQUD"))
+#'         type = 'default', P = FALSE, C = FALSE, verbose = TRUE,
+#'         weight = NULL, seedbicluster = NULL)
+BCQUD <- function(x = NULL, c = 0.95, o = 100, f = 1,
+                  k = max(ncol(x) %/% 20, 2),
+                  type = 'default', P = FALSE, C = FALSE, verbose = TRUE,
+                  weight = NULL, seedbicluster = NULL) {
+  if (is.null(x)) return(methods::new("BCQUD"))
+  res <- biclust(x = x, method = BCQUD(), c = c, o = o, f = f,
+                          k = k, type = type, P = P, C = C, verbose = verbose,
+                          weight = weight, seedbicluster = seedbicluster)
+  res@Parameters$Call = match.call()
+  return(res)
 }

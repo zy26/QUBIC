@@ -11,7 +11,9 @@ int count_intersect(const std::set<int> & ds1, const std::set<int> & ds2) {
     if (*first1 < *first2) ++first1;
     else if (*first2 < *first1) ++first2;
     else {
-      ++cnt; ++first1; ++first2;
+      ++cnt;
+      ++first1;
+      ++first2;
     }
   }
   return cnt;

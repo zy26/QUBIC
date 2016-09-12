@@ -10,11 +10,11 @@
 struct rule {
   float lower;
   float upper;
-  size_t cntl;
-  size_t cntu;
+  std::size_t cntl;
+  std::size_t cntu;
 };
 
-std::vector<std::vector<discrete>> discretize(const std::vector<std::vector<continuous>> &arr, const double f,
-  const discrete divided, std::vector<rule> &genes_rules);
-
+DiscreteArrayList discretize(const std::vector<std::vector<continuous>> &arr, const short divided, const double f,
+  std::vector<rule> &genes_rules);
+DiscreteArrayList discretize(const std::vector<std::vector<continuous>> &arr, const short divided, const double f);
 #endif

@@ -2,21 +2,26 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @backref src/rcpp_qubic.cpp
-.qubic <- function(matrix, r, q, c, o, f, k, P, S, C, verbose) {
-    .Call('QUBIC_qubic', PACKAGE = 'QUBIC', matrix, r, q, c, o, f, k, P, S, C, verbose)
-}
-
-#' @backref src/rcpp_qubic.cpp
 .qubic_d <- function(matrix, c, o, f, k, P, S, C, verbose) {
     .Call('QUBIC_qubic_d', PACKAGE = 'QUBIC', matrix, c, o, f, k, P, S, C, verbose)
 }
 
+#' @backref src/rcpp_qubic.cpp
+.qubic_de <- function(matrix, c, verbose, RowxNumber, NumberxCol) {
+    .Call('QUBIC_qubic_de', PACKAGE = 'QUBIC', matrix, c, verbose, RowxNumber, NumberxCol)
+}
+
+#' @backref src/rcpp_qubic.cpp
+.qubic_dw <- function(matrix, c, o, f, k, P, S, C, verbose, weight) {
+    .Call('QUBIC_qubic_dw', PACKAGE = 'QUBIC', matrix, c, o, f, k, P, S, C, verbose, weight)
+}
+
 #' Create a qualitative discrete matrix for a given gene expression matrix
 #'
-#' \code{qudiscretize} delivers a discret matrix. It is useful if we just want to get a discretized matrix.
+#' \code{qudiscretize} delivers a discrete matrix. It is useful if we just want to get a discretized matrix.
 #'
 #' @details
-#' \code{qudiscretize} convert a given gene expression matrix to a discret matrix.
+#' \code{qudiscretize} convert a given gene expression matrix to a discrete matrix.
 #' It's implimented in C++, providing a increase in speed over the C equivalent.
 #'
 #' @usage qudiscretize(x, r = 1L, q = 0.06)

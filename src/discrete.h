@@ -3,18 +3,15 @@
 
 #include <vector>
 
-typedef short discrete;
-typedef std::vector<discrete> DiscreteArray;
+typedef std::vector<short> DiscreteArray;
 typedef std::vector<DiscreteArray> DiscreteArrayList;
 
-typedef std::vector<discrete> Symbols;
+typedef std::vector<short> Symbols;
 
-class DiscreteArrayListWithSymbols
-{
+class DiscreteArrayListWithSymbols {
 public:
   DiscreteArrayList list;
   Symbols symbols;
 private:
-
 };
 #endif // DISCRETE_H

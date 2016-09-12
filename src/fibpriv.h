@@ -41,15 +41,15 @@ static void fh_insertrootlist(struct fibheap *, struct fibheap_el *);
 static void fh_removerootlist(struct fibheap *, struct fibheap_el *);
 static void fh_consolidate(struct fibheap *);
 static void fh_heaplink(struct fibheap *h, struct fibheap_el *y,
-struct fibheap_el *x);
+  struct fibheap_el *x);
 static void fh_cut(struct fibheap *, struct fibheap_el *, struct fibheap_el *);
 static void fh_cascading_cut(struct fibheap *, struct fibheap_el *);
 static struct fibheap_el *fh_extractminel(struct fibheap *);
 static void fh_checkcons(struct fibheap *h);
 static int fh_compare(struct fibheap *h, struct fibheap_el *a,
-struct fibheap_el *b);
+  struct fibheap_el *b);
 static int fh_comparedata(struct fibheap *h, int key, void *data,
-struct fibheap_el *b);
+  struct fibheap_el *b);
 static void fh_insertel(struct fibheap *h, struct fibheap_el *x);
 static void fh_deleteel(struct fibheap *h, struct fibheap_el *x);
 
