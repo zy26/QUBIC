@@ -1,0 +1,22 @@
+citHeader("To cite QUBIC in publications use:")
+
+citEntry(entry = "Article",
+  title        = "{QUBIC}: a bioconductor package for qualitative biclustering analysis of gene co-expression data",
+  author       = personList(as.person("Yu Zhang"),
+                   as.person("Juan Xie"),
+                   as.person("Jinyu Yang"),
+                   as.person("Anne Fennell"),
+                   as.person("Chi Zhang"),
+                   as.person("Qin Ma")),
+  journal      = "Bioinformatics",
+  year         = "2016",
+  pages        = "btw635",
+  url          = "http://bioinformatics.oxfordjournals.org/cgi/pmidlookup?view=long&pmid=27802973",
+  doi          = "10.1093/bioinformatics/btw635",
+
+  textVersion  =
+  paste("Yu Zhang, Juan Xie, Jinyu Yang, Anne Fennell, Chi Zhang, Qin Ma (2016).",
+        "QUBIC: a bioconductor package for qualitative biclustering analysis of gene co-expression data.",
+        "Bioinformatics, btw635.",
+        "URL http://bioinformatics.oxfordjournals.org/cgi/pmidlookup?view=long&pmid=27802973.")
+)
