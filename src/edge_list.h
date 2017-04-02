@@ -91,7 +91,7 @@ public:
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic)
 #endif
-    for (int i = 0; static_cast<std::size_t>(i) < arr_c.size(); i++)
+    for (int i = 0; i < static_cast<int>(arr_c.size()); i++)
       for (std::size_t j = i + 1; j < arr_c.size(); j++)
         intersects_[j * (j - 1) / 2 + i] = str_intersect_r(arr_c[i], arr_c[j]); // if not compress, it will save some time, but memory cannot be alloc sometimes.
   }
