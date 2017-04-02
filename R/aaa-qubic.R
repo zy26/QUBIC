@@ -5,6 +5,11 @@
 #' \code{QUBIC} is a biclustering package, with source code upgrading from C code to C++ code.
 #' The updated source code can avoid memory allocation error and is much efficient than the original one.
 #' Based on our preliminary analysis, it can save 40\% running time on a plant microarray data.
+#' Whenever using this package, please cite as
+#' Yu Zhang, Juan Xie, Jinyu Yang, Anne Fennell, Chi Zhang, Qin Ma;
+#' QUBIC: a bioconductor package for qualitative biclustering analysis of gene co-expression data.
+#' \emph{Bioinformatics}, 2017; 33 (3): 450-452.
+#' doi: 10.1093/bioinformatics/btw635
 #'
 #'@details
 #' For a given representing matrix of a microarray data set,
@@ -67,12 +72,9 @@
 #'
 #' @seealso \code{\link{BCQU-class}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}} \code{\link{biclust}}
 #'
-#' @references Li G, Ma Q, Tang H, Paterson AH, Xu Y.
-#' QUBIC: a qualitative biclustering algorithm for analyses of gene expression data.
-#' \emph{Nucleic Acids Research}. 2009;\bold{37(15)}:e101. doi:10.1093/nar/gkp491.
-#' @references Zhou F, Ma Q, Li G, Xu Y.
-#' QServer: A Biclustering Server for Prediction and Assessment of Co-Expressed Gene Clusters.
-#' \emph{PLoS ONE}. 2012;\bold{7(3)}:e32660. doi: 10.1371/journal.pone.0032660
+#' @references Yu Zhang, Juan Xie, Jinyu Yang, Anne Fennell, Chi Zhang, Qin Ma;
+#' QUBIC: a bioconductor package for qualitative biclustering analysis of gene co-expression data.
+#' \emph{Bioinformatics}, 2017; 33 (3): 450-452.
 #'
 #' @keywords qubic biclust bicluster bi-cluster biclustering bi-clustering
 #'

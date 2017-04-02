@@ -2,19 +2,20 @@
 % Please edit documentation in R/aaa-qubic.R, R/qubiclust.R
 \docType{class}
 \name{QUBIC}
-\alias{BCQU}
-\alias{BCQUD}
-\alias{BCQUD-class}
 \alias{QUBIC}
-\alias{QUBICD}
-\alias{QUD}
+\alias{qubic}
+\alias{BCQU}
 \alias{bcqu}
 \alias{biclust,matrix,BCQU-method}
-\alias{biclust,matrix,BCQUD-method}
-\alias{qubic}
+\alias{BCQU}
+\alias{BCQUD-class}
 \alias{qubic_d}
-\alias{qubiclust}
+\alias{QUBICD}
+\alias{QUD}
+\alias{biclust,matrix,BCQUD-method}
+\alias{BCQUD}
 \alias{qubiclust_d}
+\alias{qubiclust}
 \title{QUBIC: A Qualitative Biclustering Algorithm for Analyses of Gene Expression Data}
 \usage{
 \S4method{biclust}{matrix,BCQU}(x, method = BCQU(),
@@ -96,6 +97,11 @@ Returns an Biclust object, which contains bicluster candidates
 \code{QUBIC} is a biclustering package, with source code upgrading from C code to C++ code.
 The updated source code can avoid memory allocation error and is much efficient than the original one.
 Based on our preliminary analysis, it can save 40\% running time on a plant microarray data.
+Whenever using this package, please cite as
+Yu Zhang, Juan Xie, Jinyu Yang, Anne Fennell, Chi Zhang, Qin Ma;
+QUBIC: a bioconductor package for qualitative biclustering analysis of gene co-expression data.
+\emph{Bioinformatics}, 2017; 33 (3): 450-452.
+doi: 10.1093/bioinformatics/btw635
 
 \code{BCQUD} performs a QUalitative BIClustering for a discret matrix.
 }
@@ -129,6 +135,7 @@ where I and J are subsets of genes and conditions, respectively.
 
 \item \code{qubiclust}: Performs a QUalitative BIClustering.
 }}
+
 \examples{
 # Random matrix with one embedded bicluster
 test <- matrix(rnorm(5000), 100, 50)
@@ -243,13 +250,9 @@ disc<-qudiscretize(BicatYeast[1:10,1:10])
 biclust::biclust(disc, method=BCQUD())
 }
 \references{
-Li G, Ma Q, Tang H, Paterson AH, Xu Y.
-QUBIC: a qualitative biclustering algorithm for analyses of gene expression data.
-\emph{Nucleic Acids Research}. 2009;\bold{37(15)}:e101. doi:10.1093/nar/gkp491.
-
-Zhou F, Ma Q, Li G, Xu Y.
-QServer: A Biclustering Server for Prediction and Assessment of Co-Expressed Gene Clusters.
-\emph{PLoS ONE}. 2012;\bold{7(3)}:e32660. doi: 10.1371/journal.pone.0032660
+Yu Zhang, Juan Xie, Jinyu Yang, Anne Fennell, Chi Zhang, Qin Ma;
+QUBIC: a bioconductor package for qualitative biclustering analysis of gene co-expression data.
+\emph{Bioinformatics}, 2017; 33 (3): 450-452.
 }
 \seealso{
 \code{\link{BCQU-class}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}} \code{\link{biclust}}
@@ -260,4 +263,3 @@ QServer: A Biclustering Server for Prediction and Assessment of Co-Expressed Gen
 \keyword{bicluster}
 \keyword{biclustering}
 \keyword{qubic}
-
