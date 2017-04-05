@@ -5,6 +5,9 @@ author:
 - Juan Xie
 - Qin Ma
 classoption: hyperref,
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{QUBIC Tutorial}
 output:
   pdf_document:
     fig_caption: yes
@@ -25,8 +28,6 @@ header-includes:
   numberstyle=\footnotesize, showspaces=false, showstringspaces=false, showtabs=false,
   stringstyle=\color[rgb]{0.31,0.60,0.02}, tabsize=2, }
 bibliography: bibliography.bib
-vignette: |
-  %\VignetteEngine{knitr::rmarkdown} %\VignetteIndexEntry{QUBIC Tutorial}
 ---
 
 ```{r setup, include=FALSE}
