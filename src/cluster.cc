@@ -128,7 +128,7 @@ static bool check_seed(const Edge* e, const std::vector<Block>& bb, std::size_t 
   for (std::size_t index = 0; index < rows; index++)
     if (profiles[index] > 1) return false;
   b3 = std::max(bb[b1].block_cols(), bb[b2].block_cols());
-  return e->score - b3 >= 0;
+  return e->score >= b3;
 }
 
 static long double get_pvalue(const continuous& a, const int& b) {
