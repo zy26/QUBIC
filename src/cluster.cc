@@ -242,7 +242,8 @@ static std::vector<Block> report_blocks(std::vector<Block> bb, int RPT_BLOCK, do
                           count_intersect(output[k].genes_reverse, b_ptr.genes_order) +
                           count_intersect(output[k].genes_reverse, b_ptr.genes_reverse);
       double inter_cols = count_intersect(output[k].conds, b_ptr.conds);
-      if (inter_rows * inter_cols > FILTER * cur_rows * cur_cols) {
+      /*if (inter_rows * inter_cols > FILTER * cur_rows * cur_cols) {*/
+      if (inter_rows > FILTER*cur_rows|| inter_cols>FILTER*cur_cols){
         flag = false;
         break;
       }
