@@ -3,6 +3,7 @@
 #include "discretize.h"
 #include <cmath> // floor, ceil
 #include <cstddef> // size_t
+#include <cstdio>
 #include <algorithm>
 #include <list>
 #include <vector>
