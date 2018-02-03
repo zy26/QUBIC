@@ -21,7 +21,7 @@ VignetteBuilder: knitr
 biocViews: StatisticalMethod, Microarray, DifferentialExpression,
         MultipleComparison, Clustering, Visualization, GeneExpression,
         Network
-Version: 1.7.1
+Version: 1.7.2
 License: CC BY-NC-ND 4.0 + file LICENSE
 Depends: R (>= 3.1), biclust
 Imports: Rcpp (>= 0.11.0), methods, Matrix
