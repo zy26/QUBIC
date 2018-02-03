@@ -92,7 +92,7 @@ There are nine functions provided by QUBIC package.
 * ```qunetwork()``` can automatically create co-expression networks based on the identified biclusters by QUBIC;
 * ```qunet2xml()```can convert the constructed co-expression networks into XGMML format for further network analysis in Cytoscape, Biomax and JNets; 
 * *query-based biclustering* allows users to input additional biological information to guide the biclustering progress;
-* *bicluster* expanding expands existing biclusters under specified consistency level;
+* *bicluster expanding* expands existing biclusters under specified consistency level;
 * *biclusters comparison* compares biclusters obtained via different algorithms or parameters.
 
 The following examples illustrate how these functions work.
