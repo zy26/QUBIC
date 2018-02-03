@@ -27,6 +27,7 @@ header-includes:
   keepspaces=true, keywordstyle=\color[rgb]{0.13,0.29,0.53}\bfseries, linewidth=\textwidth,
   numberstyle=\footnotesize, showspaces=false, showstringspaces=false, showtabs=false,
   stringstyle=\color[rgb]{0.31,0.60,0.02}, tabsize=2, }
+- \providecommand{\passthrough}[1]{#1}
 bibliography: bibliography.bib
 ---
 
