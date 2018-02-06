@@ -1,0 +1,4 @@
+dist: xenial
+language: r
+bioc_required: true
+cache: packages
