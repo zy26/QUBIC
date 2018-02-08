@@ -30,8 +30,6 @@ header-includes:
 bibliography: bibliography.bib
 ---
 
-\providecommand{\passthrough}[1]{#1}
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 options(width=98)
@@ -51,7 +49,7 @@ citation("QUBIC")
 
 # Other languages
 
-If R is not your thing, there is also [a C version of `QUBIC`](https://github.com/maqin2001/QUBIC).
+If R is not your thing, there is also [a C version of *QUBIC*](https://github.com/maqin2001/QUBIC).
 
 # Help 
 
@@ -75,7 +73,7 @@ install.packages("devtools")
 devtools::install_github("zy26/QUBIC")
 ```
 
-Load `QUBIC`
+Load *QUBIC*
 
 
 ```{r, message=FALSE}
@@ -87,12 +85,12 @@ Functions
 
 There are nine functions provided by QUBIC package. 
 
-* ```qudiscretize()```creates a discrete matrix for a given gene expression matrix;
-* ```BCQU()```performs a qualitative biclustering for real matrix;
-* ```BCQUD()```performs a qualitative biclustering for discretized matrix;
-* ```quheatmap()```can draw heatmap for singe bicluster or overlapped biclusters;
-* ```qunetwork()``` can automatically create co-expression networks based on the identified biclusters by QUBIC;
-* ```qunet2xml()```can convert the constructed co-expression networks into XGMML format for further network analysis in Cytoscape, Biomax and JNets; 
+* *qudiscretize()* creates a discrete matrix for a given gene expression matrix;
+* *BCQU()* performs a qualitative biclustering for real matrix;
+* *BCQUD()* performs a qualitative biclustering for discretized matrix;
+* *quheatmap()* can draw heatmap for singe bicluster or overlapped biclusters;
+* *qunetwork()* can automatically create co-expression networks based on the identified biclusters by QUBIC;
+* *qunet2xml()* can convert the constructed co-expression networks into XGMML format for further network analysis in Cytoscape, Biomax and JNets; 
 * *query-based biclustering* allows users to input additional biological information to guide the biclustering progress;
 * *bicluster expanding* expands existing biclusters under specified consistency level;
 * *biclusters comparison* compares biclusters obtained via different algorithms or parameters.
