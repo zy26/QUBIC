@@ -61,8 +61,9 @@ Stable version from BioConductor
 
 
 ```r
-source("https://bioconductor.org/biocLite.R")
-biocLite("QUBIC")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("QUBIC")
 ```
 
 Or development version from GitHub
