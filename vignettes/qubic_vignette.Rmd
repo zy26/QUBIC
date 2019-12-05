@@ -1,9 +1,7 @@
 ---
 title: "QUBIC Tutorial"
 author:
-- Yu Zhang
-- Juan Xie
-- Qin Ma
+- Yu Zhang, Juan Xie, *and* Qin Ma
 classoption: hyperref,
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
@@ -37,7 +35,7 @@ options(width=98)
 
 Gene expression data is very important in experimental molecular biology [@brazma00], especially for cancer study [@fehrmann15]. The large-scale microarray data and RNA-seq data provide good opportunity to do the gene co-expression analyses and identify co-expressed gene modules; and the effective and efficient algorithms are needed to implement such analysis. Substantial efforts have been made in this field, such as @cheng00, Plaid [@lazzeroni02], Bayesian Biclustering [BCC, @gu08], among them Cheng and Church and Plaid has the R package implementation. It is worth noting that our in-house biclustering algorithm, QUBIC [@li09], is reviewed as one of the best programs in terms of their prediction performance on benchmark datasets. Most importantly, it is reviewed as the best one for large-scale real biological data [@eren12].
 
-Until now, QUBIC has been cited over 120 times (via [Google Scholar](https://scholar.google.com/scholar?cites=15047943471221701463)) and its web server, QServer, was developed in 2012 to facilitate the users without comprehensive computational background [@zhou12]. In the past five years, the cost of RNA-sequencing decreased dramatically, and the amount of gene expression data keeps increasing. Upon requests from users and collaborators, we developed this R package of QUBIC to void submitting large data to a webserver.
+Until now, QUBIC has been cited over 200 times (via [Google Scholar](https://scholar.google.com/scholar?cites=15047943471221701463)) and its web server, QServer, was developed in 2012 to facilitate the users without comprehensive computational background [@zhou12]. In the past five years, the cost of RNA-sequencing decreased dramatically, and the amount of gene expression data keeps increasing. Upon requests from users and collaborators, we developed this R package of QUBIC to void submitting large data to a webserver.
 
 The unique features of our R package [@zhang16] include (1) updated and more stable back-end resource code (re-written by C++), which has better memory control and is more efficient than the one published in 2009. For an input dataset in *Arabidopsis*, with 25,698 genes and 208 samples, we observed more than 40% time saving; and (2) comprehensive functions and examples, including discretize function, heatmap drawing and network analysis. 
 
@@ -49,7 +47,7 @@ citation("QUBIC")
 
 # Other languages
 
-If R is not your thing, there is also [a C version of *QUBIC*](https://github.com/maqin2001/QUBIC).
+If R is not your thing, there is also [a C version of `QUBIC`](https://github.com/maqin2001/QUBIC).
 
 # Help 
 
@@ -61,8 +59,9 @@ Stable version from BioConductor
 
 
 ```r
-if (!requireNamespace("BiocManager", quietly=TRUE))
+if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
+
 BiocManager::install("QUBIC")
 ```
 
@@ -74,7 +73,7 @@ install.packages("devtools")
 devtools::install_github("zy26/QUBIC")
 ```
 
-Load *QUBIC*
+Load `QUBIC`
 
 
 ```{r, message=FALSE}
@@ -86,12 +85,12 @@ Functions
 
 There are nine functions provided by QUBIC package. 
 
-* *qudiscretize()* creates a discrete matrix for a given gene expression matrix;
-* *BCQU()* performs a qualitative biclustering for real matrix;
-* *BCQUD()* performs a qualitative biclustering for discretized matrix;
-* *quheatmap()* can draw heatmap for singe bicluster or overlapped biclusters;
-* *qunetwork()* can automatically create co-expression networks based on the identified biclusters by QUBIC;
-* *qunet2xml()* can convert the constructed co-expression networks into XGMML format for further network analysis in Cytoscape, Biomax and JNets; 
+* ```qudiscretize()```creates a discrete matrix for a given gene expression matrix;
+* ```BCQU()```performs a qualitative biclustering for real matrix;
+* ```BCQUD()```performs a qualitative biclustering for discretized matrix;
+* ```quheatmap()```can draw heatmap for singe bicluster or overlapped biclusters;
+* ```qunetwork()``` can automatically create co-expression networks based on the identified biclusters by QUBIC;
+* ```qunet2xml()```can convert the constructed co-expression networks into XGMML format for further network analysis in Cytoscape, Biomax and JNets; 
 * *query-based biclustering* allows users to input additional biological information to guide the biclustering progress;
 * *bicluster expanding* expands existing biclusters under specified consistency level;
 * *biclusters comparison* compares biclusters obtained via different algorithms or parameters.
