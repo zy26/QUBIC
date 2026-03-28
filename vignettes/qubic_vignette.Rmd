@@ -1,8 +1,7 @@
----
+﻿---
 title: "QUBIC Tutorial"
 author:
 - Yu Zhang, Juan Xie, *and* Qin Ma
-classoption: hyperref,
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{QUBIC Tutorial}
@@ -31,17 +30,22 @@ bibliography: bibliography.bib
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 options(width=98)
+
+has_biclust <- function() {
+    !isTRUE(getOption("qubic.disable.biclust", FALSE)) &&
+        requireNamespace("biclust", quietly = TRUE)
+}
 ```
 
 Gene expression data is very important in experimental molecular biology [@brazma00], especially for cancer study [@fehrmann15]. The large-scale microarray data and RNA-seq data provide good opportunity to do the gene co-expression analyses and identify co-expressed gene modules; and the effective and efficient algorithms are needed to implement such analysis. Substantial efforts have been made in this field, such as @cheng00, Plaid [@lazzeroni02], Bayesian Biclustering [BCC, @gu08], among them Cheng and Church and Plaid has the R package implementation. It is worth noting that our in-house biclustering algorithm, QUBIC [@li09], is reviewed as one of the best programs in terms of their prediction performance on benchmark datasets. Most importantly, it is reviewed as the best one for large-scale real biological data [@eren12].
 
-Until now, QUBIC has been cited over 200 times (via [Google Scholar](https://scholar.google.com/scholar?cites=15047943471221701463)) and its web server, QServer, was developed in 2012 to facilitate the users without comprehensive computational background [@zhou12]. In the past five years, the cost of RNA-sequencing decreased dramatically, and the amount of gene expression data keeps increasing. Upon requests from users and collaborators, we developed this R package of QUBIC to void submitting large data to a webserver.
+Until now, QUBIC has been cited over 300 times (via [Google Scholar](https://scholar.google.com/scholar?cites=15047943471221701463)) and its web server, QServer, was developed in 2012 to facilitate the users without comprehensive computational background [@zhou12]. In the past five years, the cost of RNA-sequencing decreased dramatically, and the amount of gene expression data keeps increasing. Upon requests from users and collaborators, we developed this R package of QUBIC to void submitting large data to a webserver.
 
 The unique features of our R package [@zhang16] include (1) updated and more stable back-end resource code (re-written by C++), which has better memory control and is more efficient than the one published in 2009. For an input dataset in *Arabidopsis*, with 25,698 genes and 208 samples, we observed more than 40% time saving; and (2) comprehensive functions and examples, including discretize function, heatmap drawing and network analysis. 
 
 # How to cite
 
-```{r, comment=NA, message=FALSE}
+```{r cite-qubic, comment=NA, message=FALSE}
 citation("QUBIC")
 ```
 
@@ -76,7 +80,7 @@ devtools::install_github("zy26/QUBIC")
 Load `QUBIC`
 
 
-```{r, message=FALSE}
+```{r load-qubic, message=FALSE}
 library("QUBIC")
 ```
 
@@ -96,6 +100,12 @@ There are nine functions provided by QUBIC package.
 * *biclusters comparison* compares biclusters obtained via different algorithms or parameters.
 
 The following examples illustrate how these functions work.
+
+For comparison and migration purposes, this vignette supports two execution modes.
+When `biclust` is available (and not disabled), legacy `biclust` paths are used and
+cache files are refreshed. When `biclust` is unavailable (or `options(qubic.disable.biclust = TRUE)`),
+the cached baselines are used, and `summary()` for QUBIC results still prints a detailed
+cluster report similar to `biclust` output.
 
 # Example of a random matrix with two diferent embedded biclusters
 
@@ -123,7 +133,7 @@ test[31:40, 31:40] <- t(rep(t2, 10) * rnorm(100, 3, 0.3))
 test[51:60, 51:60] <- t(rep(t3, 10) * rnorm(100, 3, 0.3))
 
 # QUBIC
-res <- biclust::biclust(test, method = BCQU())
+res <- qubiclust(test)
 summary(res)
 
 # Show heatmap
@@ -140,7 +150,18 @@ quheatmap(test, res, number = c(1, 3), col = hmcols, showlabel = TRUE)
 
 ```{r yeast, cache = TRUE}
 library(QUBIC)
-data(BicatYeast)
+yeast_cache_path <- "data/BicatYeast_cached.rds"
+
+if (has_biclust()) {
+    data("BicatYeast", package = "biclust")
+    saveRDS(BicatYeast, yeast_cache_path, compress = "xz")
+} else {
+    if (!file.exists(yeast_cache_path)) {
+        stop("Missing cached yeast dataset: ", yeast_cache_path,
+             ". Install 'biclust' once to refresh cache, or provide this file.")
+    }
+    BicatYeast <- readRDS(yeast_cache_path)
+}
 
 # Discretization
 matrix1 <- BicatYeast[1:7, 1:4]
@@ -151,8 +172,7 @@ matrix2
 
 # QUBIC
 x <- BicatYeast
-system.time(res <- biclust::biclust(x, method = BCQU()))
-
+system.time(res <- qubiclust(x))
 summary(res)
 ```
 
@@ -190,7 +210,7 @@ We can draw network for single bicluster.
 net <- qunetwork(x, res, number = 2, group = 2, method = "spearman")
 if (requireNamespace("qgraph", quietly = TRUE))
     qgraph::qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
-        color = cbind(rainbow(length(net[[2]]) -  1), "gray"), edge.label = FALSE)
+        color = cbind(rainbow(length(net[[2]]) -  1), "gray"), edge.labels = FALSE)
 
 ```
 
@@ -201,7 +221,7 @@ We can also draw network for overlapped biclusters.
 net <- qunetwork(x, res, number = c(2, 3), group = c(2, 3), method = "spearman")
 if (requireNamespace("qgraph", quietly = TRUE))
     qgraph::qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
-        legend.cex = 0.5, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
+        legend.cex = 0.5, color = c("red", "blue", "gold", "gray"), edge.labels = FALSE)
 
 ```
 
@@ -231,9 +251,9 @@ matrix2 <- qudiscretize(matrix1)
 matrix2
 
 # QUBIC
-res <- biclust::biclust(ecoli, method = BCQU(), r = 1, q = 0.06, c = 0.95, o = 100, 
+res <- qubiclust(ecoli, r = 1, q = 0.06, c = 0.95, o = 100,
     f = 0.25, k = max(ncol(ecoli)%/%20, 2))
-system.time(res <- biclust::biclust(ecoli, method = BCQU(), r = 1, q = 0.06, c = 0.95, 
+system.time(res <- qubiclust(ecoli, r = 1, q = 0.06, c = 0.95,
     o = 100, f = 0.25, k = max(ncol(ecoli)%/%20, 2)))
 summary(res)
 
@@ -266,7 +286,7 @@ quheatmap(ecoli, res, number = c(4, 8), showlabel = TRUE, col = paleta)
 net <- qunetwork(ecoli, res, number = 5, group = 5, method = "spearman")
 if (requireNamespace("qgraph", quietly = TRUE))
     qgraph::qgraph(net[[1]], groups = net[[2]], layout = "spring", minimum = 0.6, 
-        color = cbind(rainbow(length(net[[2]]) - 1), "gray"), edge.label = FALSE)
+        color = cbind(rainbow(length(net[[2]]) - 1), "gray"), edge.labels = FALSE)
 
 
 ```
@@ -277,7 +297,7 @@ if (requireNamespace("qgraph", quietly = TRUE))
 net <- qunetwork(ecoli, res, number = c(4, 8), group = c(4, 8), method = "spearman")
 if (requireNamespace("qgraph", quietly = TRUE))
     qgraph::qgraph(net[[1]], groups = net[[2]], legend.cex = 0.5, layout = "spring", 
-        minimum = 0.6, color = c("red", "blue", "gold", "gray"), edge.label = FALSE)
+        minimum = 0.6, color = c("red", "blue", "gold", "gray"), edge.labels = FALSE)
 
 ```
 
@@ -302,9 +322,9 @@ library(QUBIC)
 library(QUBICdata)
 data("ecoli", package = "QUBICdata")
 data("ecoli.weight", package = "QUBICdata")
-res0 <- biclust(ecoli, method = BCQU(), verbose = FALSE)
+res0 <- qubiclust(ecoli, verbose = FALSE)
 res0
-res4 <- biclust(ecoli, method = BCQU(), weight = ecoli.weight, verbose = FALSE)
+res4 <- qubiclust(ecoli, weight = ecoli.weight, verbose = FALSE)
 res4
 ```
 
@@ -313,7 +333,7 @@ res4
 we can expand existing biclustering results to recruite more genes according to certain consistency level:
 
 ```{r bicluster-expanding, cache = TRUE}
-res5 <- biclust(x = ecoli, method = BCQU(), seedbicluster = res, f = 0.25, verbose = FALSE)
+res5 <- qubiclust(x = ecoli, seedbicluster = res, f = 0.25, verbose = FALSE)
 summary(res5)
 ```
 
@@ -321,12 +341,58 @@ summary(res5)
 
 We can compare the biclustering results obtained from different algorithms, or from a same algorithm with different combinations of parameter.
 
+```{r biclust-baseline-metadata, cache = TRUE}
+baseline_cache_path <- "data/biclust_baseline_results.rds"
+
+if (has_biclust() && methods::isClass("BCQU")) {
+    test_for_cache <- ecoli[1:50, , drop = FALSE]
+    baseline <- list(
+        biclust_version = as.character(utils::packageVersion("biclust")),
+        created_at = as.character(Sys.time()),
+        dataset = "QUBICdata::ecoli[1:50, ]",
+        original_calls = c(
+            "res6 <- biclust::biclust(test, method = BCQU(), verbose = FALSE)",
+            "res7 <- biclust::biclust(test, method = biclust::BCCC())",
+            "res8 <- biclust::biclust(test, method = biclust::BCBimax())"
+        ),
+        results = list(
+            BCQU = biclust::biclust(test_for_cache, method = BCQU(), verbose = FALSE),
+            BCCC = biclust::biclust(test_for_cache, method = biclust::BCCC()),
+            BCBimax = biclust::biclust(test_for_cache, method = biclust::BCBimax())
+        )
+    )
+    saveRDS(baseline, baseline_cache_path, compress = "xz")
+} else {
+    if (!file.exists(baseline_cache_path)) {
+        stop("Missing cached biclust baseline results: ", baseline_cache_path,
+             ". Install 'biclust' once to refresh cache, or provide this file.")
+    }
+    baseline <- readRDS(baseline_cache_path)
+}
+
+cat("Cached biclust version:", baseline$biclust_version, "\n")
+cat("Cached at:", baseline$created_at, "\n")
+cat("Original calls used for baseline:\n")
+for (ln in baseline$original_calls) {
+    cat("  ", ln, "\n")
+}
+```
+
 ```{r biclusters-comparison, cache = TRUE}
 test <- ecoli[1:50,]
-res6 <- biclust(test, method = BCQU(), verbose = FALSE)
-res7 <- biclust (test, method = BCCC())
-res8 <- biclust(test, method = BCBimax())
-showinfo (test, c(res6, res7, res8))
+if (!exists("baseline")) {
+    baseline <- readRDS("data/biclust_baseline_results.rds")
+}
+res6 <- baseline$results$BCQU
+res7 <- baseline$results$BCCC
+res8 <- baseline$results$BCBimax
+showinfo(test, c(res6, res7, res8))
+```
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
 ```
 
 # References

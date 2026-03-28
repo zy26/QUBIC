@@ -67,10 +67,13 @@
 #' Only suggested to use when the input data has a few conditions (e.g. less than \code{20}). Default: \code{FALSE}.
 #' @param verbose If '\code{TRUE}', prints extra information on progress.
 #' @param weight Alternative weight matrix provided by user, will append to default weight. \code{o}, \code{f}, \code{k}, \code{P}, \code{type}, \code{C} will be ignored if using this parameter.
-#' @param seedbicluster Seed provided by user, normally should be a result of function \code{biclust}.
-#' @return Returns an Biclust object, which contains bicluster candidates
+#' @param seedbicluster Seed provided by user, normally should be a result of
+#' \code{\link{qubiclust}}.
+#' @return Returns a biclustering result object. If package \code{biclust} is
+#' available, the object may be compatible with class \code{Biclust}; otherwise
+#' a QUBIC internal result object is returned.
 #'
-#' @seealso \code{\link{BCQU-class}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}} \code{\link{biclust}}
+#' @seealso \code{\link{BCQU-class}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}}
 #'
 #' @references Yu Zhang, Juan Xie, Jinyu Yang, Anne Fennell, Chi Zhang, Qin Ma;
 #' QUBIC: a bioconductor package for qualitative biclustering analysis of gene co-expression data.
@@ -82,109 +85,31 @@
 #' # Random matrix with one embedded bicluster
 #' test <- matrix(rnorm(5000), 100, 50)
 #' test[11:20, 11:20] <- rnorm(100, 3, 0.3)
-#' res <- biclust::biclust(test, method = BCQU())
+#' res <- qubiclust(test, verbose = FALSE)
 #' summary(res)
 #' show(res)
-#' names(attributes(res))
 #'
 #' \dontrun{
-#' # Load microarray matrix
-#' data(BicatYeast)
+#' # Load example microarray matrix
+#' data(ecoli, package = "QUBICdata")
 #'
-#' # Display number of column and row of BicatYeast
-#' ncol(BicatYeast)
-#' nrow(BicatYeast)
-#' # Bicluster on microarray matrix
-#' system.time(res <- biclust::biclust(BicatYeast, method = BCQU()))
+#' # Biclustering
+#' res <- qubiclust(ecoli, r = 1, q = 0.06, c = 0.95,
+#'                 o = 100, f = 0.25, k = max(ncol(ecoli) %/% 20, 2),
+#'                 verbose = FALSE)
 #'
-#' # Show bicluster info
-#' res
-#' # Show the first bicluster
-#' biclust::bicluster(BicatYeast, res, 1)
-#' # Get the 4th bicluster
-#' bic4 <- biclust::bicluster(BicatYeast, res, 4)[[1]]
+#' # Visualize selected biclusters
+#' quheatmap(x = ecoli, bicResult = res, number = 5, showlabel = TRUE)
+#' quheatmap(x = ecoli, bicResult = res, number = c(4, 8), showlabel = TRUE)
 #'
-#' # or
-#' bic4 <- biclust::bicluster(BicatYeast, res)[[4]]
-#' # Show rownames of the 4th bicluster
-#' rownames(bic4)
-#' # Show colnames of the 4th bicluster
-#' colnames(bic4)
-#'
-#' }
-#' \dontrun{
-#' # Bicluster on selected of genes
-#' data(EisenYeast)
-#' genes <- c("YHR051W", "YKL181W", "YHR124W", "YHL020C", "YGR072W", "YGR145W",
-#'     "YGR218W", "YGL041C", "YOR202W", "YCR005C")
-#' # same result as res <- biclust::biclust(EisenYeast[1:10,], method=BCQU())
-#' res <- biclust::biclust(EisenYeast[genes, ], method = BCQU())
-#' res
-#'
-#' }
-#' \dontrun{
-#' # Get bicluster by row name = 249364_at
-#' biclust::bicluster(BicatYeast, res, which(res@@RowxNumber[which(rownames(BicatYeast) ==
-#'     "249364_at"), ]))
-#'
-#' }
-#' \dontrun{
-#' # Get bicluster by col name = cold_roots_6h
-#' biclust::bicluster(BicatYeast, res, which(res@@NumberxCol[, which(colnames(BicatYeast) ==
-#'     "cold_roots_6h")]))
-#'
-#' }
-#' \dontrun{
-#' # Draw a single bicluster using drawHeatmap {bicust}
-#' data(BicatYeast)
-#' res <- biclust::biclust(BicatYeast, BCQU(), verbose = FALSE)
-#' # Draw heatmap of the first cluster
-#' biclust::drawHeatmap(BicatYeast, res, 1)
-#'
-#' }
-#' \dontrun{
-#' # Draw a single bicluster using heatmap {stats}
-#' data(BicatYeast)
-#' res <- biclust::biclust(BicatYeast, BCQU(), verbose = FALSE)
-#' bic10 <- biclust::bicluster(BicatYeast, res, 10)[[1]]
-#'
-#' # Draw heatmap of the 10th cluster using heatmap {stats}
-#' heatmap(as.matrix(t(bic10)), Rowv = NA, Colv = NA, scale = 'none')
-#'
-#' # Draw heatmap of the 10th cluster using plot_heatmap {phyloseq}
-#' if (requireNamespace('phyloseq'))
-#'     phyloseq::plot_heatmap(otu_table(bic10, taxa_are_rows = TRUE))
-#'
-#' }
-#' \dontrun{
-#' # Draw a single bicluster with original data background and color options
-#' data(BicatYeast)
-#' res <- biclust::biclust(BicatYeast, BCQU(), verbose = FALSE)
-#' palette <- colorRampPalette(c('red', 'yellow', 'green'))(n = 100)
-#' # Draw heatmap of the first cluster with color
-#' biclust::drawHeatmap(BicatYeast, res, 1, FALSE, beamercolor = TRUE, paleta = palette)
-#'
-#' }
-#' \dontrun{
-#' # Draw some overlapped biclusters
-#' data(BicatYeast)
-#' res <- biclust::biclust(BicatYeast, BCQU(), verbose = FALSE)
-#' biclusternumber(res, 1)
-#' biclusternumber(res, 3)
-#' # Draw overlapping heatmap
-#' biclust::heatmapBC(x = BicatYeast, bicResult = res, number = c(1, 3), local = TRUE)
-#'
-#' }
-#' \dontrun{
-#' # Draw all the biclusters
-#' data(BicatYeast)
-#' res <- biclust::biclust(BicatYeast, BCQU(), verbose = FALSE)
-#' # Draw the first bicluster on heatmap
-#' biclust::heatmapBC(x = BicatYeast, bicResult = res, number = 1)
-#' # Draw all the biclusters, not working well.
-#' # Overlap plotting only works for two neighbor bicluster defined by the order in the number slot.
-#' biclust::heatmapBC(x = BicatYeast, bicResult = res, number = 0)
-#'
+#' # Build network and export XGMML
+#' net <- qunetwork(ecoli, res, number = 5, groups = 5, method = "spearman")
+#' outfile <- tempfile(fileext = ".gr")
+#' sink(outfile)
+#' qunet2xml(net, minimum = 0.6,
+#'          color = cbind(grDevices::rainbow(length(net[[2]]) - 1), "gray"))
+#' sink()
+#' unlink(outfile)
 #' }
 NULL
 
@@ -194,12 +119,14 @@ NULL
 #'
 #' @name BCQU-class
 #' @rdname BCQU-class
-#' @seealso \code{\link{BCQU}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}} \code{\link{biclust}}
+#' @seealso \code{\link{BCQU}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}} \code{biclust::biclust}
 
-setClass(Class = "BCQU", contains = "BiclustMethod",
-         prototype = prototype(biclustFunction = function(x, ...) {
-  qubiclust(x, ...)
-}))
+if (requireNamespace("biclust", quietly = TRUE)) {
+  setClass(Class = "BCQU", contains = "BiclustMethod",
+           prototype = prototype(biclustFunction = function(x, ...) {
+    qubiclust(x, ...)
+  }))
+}
 
 #' @describeIn QUBIC Performs a QUalitative BIClustering.
 #' @usage \S4method{biclust}{matrix,BCQU}(x, method = BCQU(),
@@ -212,11 +139,25 @@ BCQU <- function(x = NULL, r = 1, q = 0.06, c = 0.95, o = 100, f = 1,
                  k = max(ncol(x) %/% 20, 2),
                  type = 'default', P = FALSE, C = FALSE, verbose = TRUE,
                  weight = NULL, seedbicluster = NULL) {
-  if (is.null(x)) return(methods::new("BCQU"))
-  res <- biclust(x = x, method = BCQU(), r = r, q = q, c = c, o = o, f = f,
-                        k = k, type = type, P = P, C = C, verbose = verbose,
-                        weight = weight, seedbicluster = seedbicluster)
-  res@Parameters$Call = match.call()
+  has_biclust <- requireNamespace("biclust", quietly = TRUE) && methods::isClass("BCQU")
+  if (is.null(x)) {
+    if (!has_biclust) {
+      stop("Package 'biclust' is required to use BCQU() as a method object. Use qubiclust(x, ...) when 'biclust' is unavailable.", call. = FALSE)
+    }
+    return(methods::new("BCQU"))
+  }
+
+  if (has_biclust) {
+    res <- .qubic_biclust(x = x, method = BCQU(), r = r, q = q, c = c, o = o, f = f,
+                          k = k, type = type, P = P, C = C, verbose = verbose,
+                          weight = weight, seedbicluster = seedbicluster)
+  } else {
+    res <- qubiclust(x = x, r = r, q = q, c = c, o = o, f = f,
+                     k = k, type = type, P = P, C = C, verbose = verbose,
+                     weight = weight, seedbicluster = seedbicluster)
+  }
+
+  res <- .qubic_set_result_call(res, match.call())
   return(res)
 }
 
@@ -232,13 +173,15 @@ BCQU <- function(x = NULL, r = 1, q = 0.06, c = 0.95, o = 100, f = 1,
 #'
 #' @examples
 #' # Biclustering of discretized yeast microarray data
-#' data(BicatYeast)
-#' disc<-qudiscretize(BicatYeast[1:10,1:10])
-#' biclust::biclust(disc, method=BCQUD())
-setClass("BCQUD", contains = "BiclustMethod",
-         prototype = prototype(biclustFunction = function(x, ...) {
-  qubiclust_d(x, ...)
-}))
+#' mat <- matrix(rnorm(100), 10, 10)
+#' disc <- qudiscretize(mat)
+#' qubiclust_d(disc)
+if (requireNamespace("biclust", quietly = TRUE)) {
+  setClass("BCQUD", contains = "BiclustMethod",
+           prototype = prototype(biclustFunction = function(x, ...) {
+    qubiclust_d(x, ...)
+  }))
+}
 
 #' @describeIn QUBIC Performs a QUalitative BIClustering for a discret matrix.
 #'
@@ -251,10 +194,24 @@ BCQUD <- function(x = NULL, c = 0.95, o = 100, f = 1,
                   k = max(ncol(x) %/% 20, 2),
                   type = 'default', P = FALSE, C = FALSE, verbose = TRUE,
                   weight = NULL, seedbicluster = NULL) {
-  if (is.null(x)) return(methods::new("BCQUD"))
-  res <- biclust(x = x, method = BCQUD(), c = c, o = o, f = f,
+  has_biclust <- requireNamespace("biclust", quietly = TRUE) && methods::isClass("BCQUD")
+  if (is.null(x)) {
+    if (!has_biclust) {
+      stop("Package 'biclust' is required to use BCQUD() as a method object. Use qubiclust_d(x, ...) when 'biclust' is unavailable.", call. = FALSE)
+    }
+    return(methods::new("BCQUD"))
+  }
+
+  if (has_biclust) {
+    res <- .qubic_biclust(x = x, method = BCQUD(), c = c, o = o, f = f,
                           k = k, type = type, P = P, C = C, verbose = verbose,
                           weight = weight, seedbicluster = seedbicluster)
-  res@Parameters$Call = match.call()
+  } else {
+    res <- qubiclust_d(x = x, c = c, o = o, f = f,
+                       k = k, type = type, P = P, C = C, verbose = verbose,
+                       weight = weight, seedbicluster = seedbicluster)
+  }
+
+  res <- .qubic_set_result_call(res, match.call())
   return(res)
 }

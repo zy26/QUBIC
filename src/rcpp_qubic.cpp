@@ -159,11 +159,11 @@ List qubic_dw(const IntegerMatrix matrix,
 //' @aliases qudiscretize qdiscretize
 //'
 //' @examples
-//' # Qualitative discretize yeast microarray data
-//' data(BicatYeast)
-//' qudiscretize(BicatYeast[1:7, 1:5])
+//' # Qualitative discretization on a synthetic matrix
+//' mat <- matrix(rnorm(35), 7, 5)
+//' qudiscretize(mat)
 //'
-//' @seealso \code{\link{QUBIC}} \code{\link{discretize}}
+//' @seealso \code{\link{QUBIC}}
 //' @backref src/rcpp_qubic.cpp
 // [[Rcpp::export]]
 NumericMatrix qudiscretize(const NumericMatrix x, const short r = 1, const double q = 0.06) {

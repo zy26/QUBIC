@@ -1,7 +1,7 @@
 Package: QUBIC
 Type: Package
-Title: An R package for qualitative biclustering in support of gene
-        co-expression analyses
+Title: An R Package for Qualitative Biclustering in Support of Gene
+        Co-Expression Analyses
 Description: The core function of this R package is to provide the
     implementation of the well-cited and well-reviewed QUBIC algorithm, aiming to
     deliver an effective and efficient biclustering capability. This package also
@@ -23,11 +23,12 @@ biocViews: StatisticalMethod, Microarray, DifferentialExpression,
         Network
 Version: 1.39.0
 License: CC BY-NC-ND 4.0 + file LICENSE
-Depends: R (>= 3.1), biclust
+Encoding: UTF-8
+Depends: R (>= 4.5.0)
 Imports: Rcpp (>= 0.11.0), methods, Matrix
 LinkingTo: Rcpp, RcppArmadillo
-Suggests: QUBICdata, qgraph, fields, knitr, rmarkdown
+Suggests: biclust, QUBICdata, qgraph, fields, knitr, rmarkdown
 SystemRequirements: C++11, Rtools (>= 3.1)
 Enhances: RColorBrewer
-URL: http://github.com/zy26/QUBIC
-BugReports: http://github.com/zy26/QUBIC/issues
+URL: https://github.com/zy26/QUBIC
+BugReports: https://github.com/zy26/QUBIC/issues

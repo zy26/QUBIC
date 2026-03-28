@@ -7,13 +7,15 @@
 #' @return Text of report
 #' @examples
 #' # Load microarray matrix
-#' data(BicatYeast)
-#' matrix <- BicatYeast[1:50, ];
-#' res1 <- biclust::biclust(matrix, method=BCQU(), verbose = FALSE)
-#' res2 <- biclust::biclust(matrix, method=BCCC())
-#' res3 <- biclust::biclust(matrix, method=BCBimax())
-#' # Show the report
-#' showinfo(matrix, c(res1, res2, res3))
+#' if (requireNamespace("biclust", quietly = TRUE) && methods::isClass("BCQU")) {
+#'   data(BicatYeast)
+#'   matrix <- BicatYeast[1:50, ];
+#'   res1 <- biclust::biclust(matrix, method=BCQU(), verbose = FALSE)
+#'   res2 <- biclust::biclust(matrix, method=BCCC())
+#'   res3 <- biclust::biclust(matrix, method=BCBimax())
+#'   # Show the report
+#'   showinfo(matrix, c(res1, res2, res3))
+#' }
 #' @seealso \code{\link{QUBIC}}
 showinfo <- function(matrix, bic) {
   headers <- c("Call and Parameter",
@@ -29,64 +31,50 @@ showinfo <- function(matrix, bic) {
   "union of rows, (# and %)",
   "union of columns, (# and %)",
   "overlap of first two biclusters (row, col, area)")
-  for (i in 1:length(headers)) {
-    cat(i)
-    cat(": ")
-    cat(headers[[i]])
-    cat("\n")
+  for (i in seq_along(headers)) {
+    writeLines(paste0(i, ": ", headers[[i]]))
   }
-  cat("\n")
-  cat("\n")
-  for (i in 1:length(headers)) {
-    cat(i)
-    cat("\t")
-  }
-  cat("\n")
-  for (biclust in bic) {
-    cat(deparse(biclust@Parameters$Call))
-    cat("\t")
-    cat(biclust@Number)
-    cat("\t")
-    bic <- biclust::bicluster(matrix, biclust, 1)[[1]]
-    bicall <- biclust::bicluster(matrix, biclust)
-    cat(nrow(bic))
-    cat("\t")
-    cat(ncol(bic))
-    cat("\t")
-    cat(nrow(bic) * ncol(bic))
-    cat("\t")
-    cat(nrow(bic) / ncol(bic))
-    cat("\t")
-    cat(nrow(matrix) / ncol(matrix))
-    cat("\t")
-    maxnrow <- c(-1, -1)
-    maxncol <- c(-1, -1)
-    maxarea <- c(-1, -1)
-    for (i in 1:biclust@Number) {
-      nrow <- nrow(bicall[[i]])
-      ncol <- ncol(bicall[[i]])
-      area <- nrow * ncol
-      if (maxnrow[[1]] < nrow) maxnrow = c(nrow, i)
-      if (maxncol[[1]] < ncol) maxncol = c(ncol, i)
-      if (maxarea[[1]] < area) maxarea = c(area, i)
+  writeLines("")
+  writeLines("")
+  writeLines(paste(seq_along(headers), collapse = "\t"))
+  matrix_ratio <- nrow(matrix) / ncol(matrix)
+
+  for (result in bic) {
+    out_fields <- rep("", length(headers))
+    out_fields[[1]] <- paste(deparse(.qubic_result_call(result)), collapse = " ")
+
+    total_biclusters <- .qubic_result_number(result)
+    out_fields[[2]] <- as.character(total_biclusters)
+
+    bic_all <- .qubic_bicluster(matrix, result)
+    bic_first <- bic_all[[1]]
+    out_fields[[3]] <- as.character(nrow(bic_first))
+    out_fields[[4]] <- as.character(ncol(bic_first))
+    out_fields[[5]] <- as.character(nrow(bic_first) * ncol(bic_first))
+    out_fields[[6]] <- as.character(nrow(bic_first) / ncol(bic_first))
+    out_fields[[7]] <- as.character(matrix_ratio)
+
+    nrows <- vapply(bic_all, nrow, integer(1L))
+    ncols <- vapply(bic_all, ncol, integer(1L))
+    areas <- nrows * ncols
+    out_fields[[8]] <- paste(c(max(nrows), which.max(nrows)), collapse = " ")
+    out_fields[[9]] <- paste(c(max(ncols), which.max(ncols)), collapse = " ")
+    out_fields[[10]] <- paste(c(max(areas), which.max(areas)), collapse = " ")
+
+    rowxnumber <- .qubic_result_rowxnumber(result)
+    numberxcol <- .qubic_result_numberxcol(result)
+    genes_union <- sum(apply(rowxnumber, 1, max))
+    out_fields[[11]] <- paste(c(genes_union, genes_union / nrow(rowxnumber) * 100), collapse = " ")
+
+    conditions_union <- sum(apply(numberxcol, 2, max))
+    out_fields[[12]] <- paste(c(conditions_union, conditions_union / ncol(numberxcol) * 100), collapse = " ")
+
+    if (total_biclusters >= 2) {
+      rows_overlap <- sum(apply(rowxnumber[, seq_len(2), drop = FALSE], 1, min))
+      cols_overlap <- sum(apply(numberxcol[seq_len(2), , drop = FALSE], 2, min))
+      out_fields[[13]] <- paste(c(rows_overlap, cols_overlap, rows_overlap * cols_overlap), collapse = " ")
     }
-    cat(maxnrow)
-    cat("\t")
-    cat(maxncol)
-    cat("\t")
-    cat(maxarea)
-    cat("\t")
-    genes_union <- sum(apply(biclust@RowxNumber, 1, max))
-    cat(c(genes_union, genes_union / nrow(biclust@RowxNumber) * 100))
-    cat("\t")
-    conditions_union <- sum(apply(biclust@NumberxCol, 2, max))
-    cat(c(conditions_union, conditions_union / ncol(biclust@NumberxCol) * 100))
-    cat("\t")
-    if(biclust@Number >= 2) {
-      rows_overlap <- sum(apply(biclust@RowxNumber[,1:2], 1, min))
-      cols_overlap <- sum(apply(biclust@NumberxCol[1:2,], 2, min))
-      cat(c(rows_overlap, cols_overlap, rows_overlap * cols_overlap))
-    }
-    cat("\n")
+
+    writeLines(paste(out_fields, collapse = "\t"))
   }
 }

@@ -4,14 +4,21 @@
 \alias{quheatmap}
 \title{Visualization of identified biclusters}
 \usage{
-quheatmap(x, bicResult, number = 1, showlabel = FALSE, col = c("#313695",
-  "#4575B4", "#74ADD1", "#ABD9E9", "#E0F3F8", "#FFFFBF", "#FEE090", "#FDAE61",
-  "#F46D43", "#D73027", "#A50026"), ...)
+quheatmap(
+  x,
+  bicResult,
+  number = 1,
+  showlabel = FALSE,
+  col = c("#313695", "#4575B4", "#74ADD1", "#ABD9E9", "#E0F3F8", "#FFFFBF", "#FEE090",
+    "#FDAE61", "#F46D43", "#D73027", "#A50026"),
+  ...
+)
 }
 \arguments{
 \item{x}{The data matrix}
 
-\item{bicResult}{biclust::BiclustResult object}
+\item{bicResult}{Result object returned by \code{\link{qubiclust}} or
+\code{\link{qubiclust_d}}}
 
 \item{number}{which bicluster to be plotted}
 
@@ -26,16 +33,20 @@ This function can visualize the identifed biclusters using heatmap in support of
 }
 \examples{
 # Load microarray matrix
-data(BicatYeast)
-res <- biclust::biclust(BicatYeast, method=BCQU(), verbose = FALSE)
-# Draw heatmap for the 2th identified bicluster
-par(mar = c(5, 4, 3, 5) + 0.1, mgp = c(0, 1, 0), cex.lab = 1.1, cex.axis = 0.5, cex.main = 1.1)
-quheatmap(x = BicatYeast, res, number = 2, showlabel = TRUE)
-# Draw heatmap for the 2th and 3th identified biclusters.
-par(mar = c(5, 5, 5, 5), cex.lab = 1.1, cex.axis = 0.5, cex.main = 1.1)
-quheatmap(x = BicatYeast, res, number = c(2, 3), showlabel = TRUE)
+if (requireNamespace("QUBICdata", quietly = TRUE)) {
+  data(ecoli, package = "QUBICdata")
+  res <- qubiclust(ecoli, r = 1, q = 0.06, c = 0.95,
+                  o = 100, f = 0.25, k = max(ncol(ecoli) \%/\% 20, 2),
+                  verbose = FALSE)
+  # Draw heatmap for the 5th identified bicluster
+  par(mar = c(5, 4, 3, 5) + 0.1, mgp = c(0, 1, 0), cex.lab = 1.1,
+      cex.axis = 0.5, cex.main = 1.1)
+  quheatmap(x = ecoli, res, number = 5, showlabel = TRUE)
+  # Draw heatmap for the 4th and 8th identified biclusters.
+  par(mar = c(5, 5, 5, 5), cex.lab = 1.1, cex.axis = 0.5, cex.main = 1.1)
+  quheatmap(x = ecoli, res, number = c(4, 8), showlabel = TRUE)
+}
 }
 \seealso{
-\code{\link{qunet2xml}} \code{\link{QUBIC}} \code{\link{heatmapBC}}
+\code{\link{qunet2xml}} \code{\link{QUBIC}} \code{\link{qunetwork}}
 }
-

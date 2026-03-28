@@ -4,8 +4,11 @@
 \alias{qunet2xml}
 \title{Convert newwork to XGMML}
 \usage{
-qunet2xml(net, minimum = 0.6,
-  color = cbind(grDevices::rainbow(length(net[[2]]) - 1), "gray"))
+qunet2xml(
+  net,
+  minimum = 0.6,
+  color = cbind(grDevices::rainbow(length(net[[2]]) - 1), "gray")
+)
 }
 \arguments{
 \item{net}{Result of \code{\link{qunetwork}}}
@@ -22,17 +25,22 @@ This function can convert the constructed co-expression networks into XGMML form
 }
 \examples{
 # Load microarray matrix
-data(BicatYeast)
-res <- biclust::biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
-# Get all biclusters
-net <- qunetwork(BicatYeast[1:50, ], res, group = c(4, 13), method = 'spearman')
-# Save the network to a XGMML file
-sink('tempnetworkresult.gr')
-qunet2xml(net, minimum = 0.6, color = cbind(grDevices::rainbow(length(net[[2]]) - 1), 'gray'))
-sink()
-# You can use Cytoscape, Biomax or JNets open file named tempnetworkresult.gr
+if (requireNamespace("QUBICdata", quietly = TRUE)) {
+  data(ecoli, package = "QUBICdata")
+  res <- qubiclust(ecoli, r = 1, q = 0.06, c = 0.95,
+                  o = 100, f = 0.25, k = max(ncol(ecoli) \%/\% 20, 2),
+                  verbose = FALSE)
+  # Get all biclusters
+  net <- qunetwork(ecoli, res, number = 5, groups = 5, method = "spearman")
+  # Save the network to a XGMML file
+  outfile <- tempfile(fileext = ".gr")
+  sink(outfile)
+  qunet2xml(net, minimum = 0.6,
+           color = cbind(grDevices::rainbow(length(net[[2]]) - 1), "gray"))
+  sink()
+  unlink(outfile)
+}
 }
 \seealso{
 \code{\link{qunetwork}} \code{\link{QUBIC}}
 }
-

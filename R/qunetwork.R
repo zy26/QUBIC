@@ -4,7 +4,8 @@
 #' Three correlation methods, Pearson, Kendall and Spearman, are available for a user, facilitating different preferences in practical usage.
 #' @aliases Qnetwork network Qunetwork
 #' @param x The data matrix
-#' @param BicRes biclust::BiclustResult object
+#' @param BicRes Result object returned by \code{\link{qubiclust}} or
+#' \code{\link{qubiclust_d}}
 #' @param number Which bicluster to be plotted
 #' @param groups An object that indicates which nodes belong together.
 #' @param method A character string indicating
@@ -13,30 +14,36 @@
 #' @return a list contains a weights matrix and groupinfo
 #' @examples
 #' # Load microarray matrix
-#' data(BicatYeast)
-#' res <- biclust::biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
-#' # Constructing the networks for the 4th and 13th identified biclusters.
-#' net <- qunetwork(BicatYeast[1:50, ], res, number = c(4, 13), group = c(4, 13), method = 'spearman')
+#' if (requireNamespace("QUBICdata", quietly = TRUE)) {
+#'   data(ecoli, package = "QUBICdata")
+#'   res <- qubiclust(ecoli, r = 1, q = 0.06, c = 0.95,
+#'                   o = 100, f = 0.25, k = max(ncol(ecoli) %/% 20, 2),
+#'                   verbose = FALSE)
+#'   # Constructing the network for the 5th identified bicluster.
+#'   net <- qunetwork(ecoli, res, number = 5, groups = 5, method = "spearman")
+#' }
 #' \dontrun{
 #' if (requireNamespace('qgraph'))
 #'     qgraph::qgraph(net[[1]], groups = net[[2]], layout = 'spring', minimum = 0.6,
-#'        color = cbind(rainbow(length(net[[2]]) - 1),'gray'), edge.label = FALSE)
+#'        color = cbind(rainbow(length(net[[2]]) - 1),'gray'), edge.labels = FALSE)
 #'
 #' }
 #' \dontrun{
-#' #Load microarray matrix
-#' data(BicatYeast)
-#' res <- biclust::biclust(BicatYeast[1:50, ], method=BCQU(), verbose = FALSE)
-#' # Constructing the networks for the 4th and 13th identified biclusters,
+#' # Load microarray matrix
+#' data(ecoli, package = "QUBICdata")
+#' res <- qubiclust(ecoli, r = 1, q = 0.06, c = 0.95,
+#'                 o = 100, f = 0.25, k = max(ncol(ecoli) %/% 20, 2),
+#'                 verbose = FALSE)
+#' # Constructing the networks for the 4th and 8th identified biclusters,
 #' #   using the whole network as a background.
-#' net <- qunetwork(BicatYeast[1:50, ], res, group = c(4, 13), method = 'spearman')
+#' net <- qunetwork(ecoli, res, number = c(4, 8), groups = c(4, 8), method = "spearman")
 #' if (requireNamespace('qgraph'))
 #'     qgraph::qgraph(net[[1]], groups = net[[2]], layout = 'spring', minimum = 0.6,
-#'        color = cbind(rainbow(length(net[[2]]) - 1),'gray'), edge.label = FALSE)
+#'        color = c('red', 'blue', 'gold', 'gray'), edge.labels = FALSE)
 #' }
 #' @seealso \code{\link{qunet2xml}} \code{\link{QUBIC}} \code{\link{cor}}
-qunetwork <-  function(x, BicRes, number = 1:BicRes@Number,
-                       groups = c(number[[1]]),
+qunetwork <-  function(x, BicRes, number = NULL,
+                       groups = NULL,
                        method = c("pearson", "kendall", "spearman")) {
   if (length(number) < 1)
     stop("at least 1 bicluster needed.")
@@ -44,12 +51,24 @@ qunetwork <-  function(x, BicRes, number = 1:BicRes@Number,
     stop("can not plot without rownames.")
   if (is.null(colnames(x)))
     stop("can not plot without colnames.")
-  bics <- biclust::bicluster(x, BicRes, number)
+
+  total_biclusters <- .qubic_result_number(BicRes)
+  if (missing(number)) {
+    number <- seq_len(total_biclusters)
+  }
+  if (is.null(number)) {
+    number <- seq_len(total_biclusters)
+  }
+  if (is.null(groups)) {
+    groups <- number[[1]]
+  }
+
+  bics <- .qubic_bicluster(x, BicRes, number)
   index <- which(number %in% groups)
 
   rownamelist <- list()
   colnamelist <- list()
-  for (i in 1:length(bics)) {
+  for (i in seq_along(bics)) {
     rownamelist[[names(bics)[i]]] <- rownames(bics[[i]])
     colnamelist[[names(bics)[i]]] <- colnames(bics[[i]])
   }
