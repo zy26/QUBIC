@@ -1,6 +1,12 @@
 \name{NEWS}
 \title{News for Package \pkg{QUBIC}}
 
+\section{CHANGES IN QUBIC VERSION 1.39.0}{
+  \itemize{
+    \item Runtime dependency on \pkg{biclust} is removed
+  }
+}
+
 \section{CHANGES IN QUBIC VERSION 1.3.2}{
   \itemize{
     \item OpenMP with Macintosh operating systems is enabled
