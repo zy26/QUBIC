@@ -3,6 +3,9 @@
 \name{BCQU-class}
 \alias{BCQU-class}
 \title{Class BCQU.}
+\value{
+Class generator for objects of class \code{BCQU}.
+}
 \description{
 Class \code{BCQU} define a QUalitative BIClustering calcuator.
 }

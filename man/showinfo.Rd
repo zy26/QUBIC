@@ -21,12 +21,12 @@ This function can make a report for biclusters.
 # Load microarray matrix
 if (requireNamespace("QUBICdata", quietly = TRUE)) {
   data(ecoli, package = "QUBICdata")
-  matrix <- ecoli[1:50, ]
+  matrix <- ecoli[1:50, , drop = FALSE]
   res1 <- qubiclust(matrix, verbose = FALSE)
   res2 <- qubiclust(matrix, c = 0.9, verbose = FALSE)
   res3 <- qubiclust(matrix, c = 0.85, verbose = FALSE)
   # Show the report
-  showinfo(matrix, c(res1, res2, res3))
+  showinfo(matrix, list(res1, res2, res3))
 }
 }
 \seealso{

@@ -9,6 +9,7 @@
 #' @param col default: c("#313695", "#4575B4", "#74ADD1", "#ABD9E9", "#E0F3F8", "#FFFFBF", "#FEE090", "#FDAE61", "#F46D43", "#D73027", "#A50026")
 #' @param showlabel If TRUE, show the xlabel and ylabel
 #' @param ... Additional options in \code{fields::image.plot}
+#' @return Invisibly returns \code{NULL} after drawing the heatmap.
 #' @seealso \code{\link{qunet2xml}} \code{\link{QUBIC}} \code{\link{qunetwork}}
 #' @examples
 #' # Load microarray matrix

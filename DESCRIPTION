@@ -27,7 +27,7 @@ Encoding: UTF-8
 Depends: R (>= 4.5.0)
 Imports: Rcpp (>= 0.11.0), methods, Matrix
 LinkingTo: Rcpp, RcppArmadillo
-Suggests: biclust, QUBICdata, qgraph, fields, knitr, rmarkdown
+Suggests: QUBICdata, qgraph, fields, knitr, rmarkdown
 SystemRequirements: C++11, Rtools (>= 3.1)
 Enhances: RColorBrewer
 URL: https://github.com/zy26/QUBIC

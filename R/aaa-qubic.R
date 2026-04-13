@@ -33,8 +33,7 @@
 #'
 #' @name QUBIC
 #'
-#' @aliases QUBIC qubic BCQU bcqu biclust,matrix,BCQU-method
-#' @param method \code{BCQU()} or \code{BCQUD()}, to perform QUBIC algorithm
+#' @aliases QUBIC qubic BCQU bcqu
 #' @param x the input data matrix, which could be the normalized gene expression matrix or its qualitative representation from Qdiscretization or other discretization ways.
 #' (for example: a qualitative representation of gene expression data) \cr
 #' For \code{BCQU()}, the data matrix should be real \cr
@@ -69,9 +68,8 @@
 #' @param weight Alternative weight matrix provided by user, will append to default weight. \code{o}, \code{f}, \code{k}, \code{P}, \code{type}, \code{C} will be ignored if using this parameter.
 #' @param seedbicluster Seed provided by user, normally should be a result of
 #' \code{\link{qubiclust}}.
-#' @return Returns a biclustering result object. If package \code{biclust} is
-#' available, the object may be compatible with class \code{Biclust}; otherwise
-#' a QUBIC internal result object is returned.
+#' @return Returns a QUBIC biclustering result object (class
+#' \code{QUBICBiclustResult}).
 #'
 #' @seealso \code{\link{BCQU-class}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}}
 #'
@@ -119,17 +117,15 @@ NULL
 #'
 #' @name BCQU-class
 #' @rdname BCQU-class
-#' @seealso \code{\link{BCQU}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}} \code{biclust::biclust}
+#' @return Class generator for objects of class \code{BCQU}.
+#' @seealso \code{\link{BCQU}} \code{\link{qudiscretize}} \code{\link{qunetwork}} \code{\link{qunet2xml}}
 
-if (requireNamespace("biclust", quietly = TRUE)) {
-  setClass(Class = "BCQU", contains = "BiclustMethod",
-           prototype = prototype(biclustFunction = function(x, ...) {
-    qubiclust(x, ...)
-  }))
+if (!methods::isClass("BCQU")) {
+  methods::setClass("BCQU")
 }
 
 #' @describeIn QUBIC Performs a QUalitative BIClustering.
-#' @usage \S4method{biclust}{matrix,BCQU}(x, method = BCQU(),
+#' @usage BCQU(x = NULL,
 #'         r = 1, q = 0.06,
 #'         c = 0.95, o = 100, f = 1,
 #'         k = max(ncol(x) \%/\% 20, 2),
@@ -139,23 +135,13 @@ BCQU <- function(x = NULL, r = 1, q = 0.06, c = 0.95, o = 100, f = 1,
                  k = max(ncol(x) %/% 20, 2),
                  type = 'default', P = FALSE, C = FALSE, verbose = TRUE,
                  weight = NULL, seedbicluster = NULL) {
-  has_biclust <- requireNamespace("biclust", quietly = TRUE) && methods::isClass("BCQU")
   if (is.null(x)) {
-    if (!has_biclust) {
-      stop("Package 'biclust' is required to use BCQU() as a method object. Use qubiclust(x, ...) when 'biclust' is unavailable.", call. = FALSE)
-    }
     return(methods::new("BCQU"))
   }
 
-  if (has_biclust) {
-    res <- .qubic_biclust(x = x, method = BCQU(), r = r, q = q, c = c, o = o, f = f,
-                          k = k, type = type, P = P, C = C, verbose = verbose,
-                          weight = weight, seedbicluster = seedbicluster)
-  } else {
-    res <- qubiclust(x = x, r = r, q = q, c = c, o = o, f = f,
-                     k = k, type = type, P = P, C = C, verbose = verbose,
-                     weight = weight, seedbicluster = seedbicluster)
-  }
+  res <- qubiclust(x = x, r = r, q = q, c = c, o = o, f = f,
+                   k = k, type = type, P = P, C = C, verbose = verbose,
+                   weight = weight, seedbicluster = seedbicluster)
 
   res <- .qubic_set_result_call(res, match.call())
   return(res)
@@ -167,7 +153,7 @@ BCQU <- function(x = NULL, r = 1, q = 0.06, c = 0.95, o = 100, f = 1,
 #'
 #' @name BCQUD-class
 #'
-#' @aliases qubic_d QUBICD QUD BCQUD-class biclust,matrix,BCQUD-method
+#' @aliases qubic_d QUBICD QUD BCQUD-class
 #'
 #' @rdname QUBIC
 #'
@@ -176,16 +162,13 @@ BCQU <- function(x = NULL, r = 1, q = 0.06, c = 0.95, o = 100, f = 1,
 #' mat <- matrix(rnorm(100), 10, 10)
 #' disc <- qudiscretize(mat)
 #' qubiclust_d(disc)
-if (requireNamespace("biclust", quietly = TRUE)) {
-  setClass("BCQUD", contains = "BiclustMethod",
-           prototype = prototype(biclustFunction = function(x, ...) {
-    qubiclust_d(x, ...)
-  }))
+if (!methods::isClass("BCQUD")) {
+  methods::setClass("BCQUD")
 }
 
 #' @describeIn QUBIC Performs a QUalitative BIClustering for a discret matrix.
 #'
-#' @usage \S4method{biclust}{matrix,BCQUD}(x, method = BCQUD(),
+#' @usage BCQUD(x = NULL,
 #'         c = 0.95, o = 100, f = 1,
 #'         k = max(ncol(x) \%/\% 20, 2),
 #'         type = 'default', P = FALSE, C = FALSE, verbose = TRUE,
@@ -194,23 +177,13 @@ BCQUD <- function(x = NULL, c = 0.95, o = 100, f = 1,
                   k = max(ncol(x) %/% 20, 2),
                   type = 'default', P = FALSE, C = FALSE, verbose = TRUE,
                   weight = NULL, seedbicluster = NULL) {
-  has_biclust <- requireNamespace("biclust", quietly = TRUE) && methods::isClass("BCQUD")
   if (is.null(x)) {
-    if (!has_biclust) {
-      stop("Package 'biclust' is required to use BCQUD() as a method object. Use qubiclust_d(x, ...) when 'biclust' is unavailable.", call. = FALSE)
-    }
     return(methods::new("BCQUD"))
   }
 
-  if (has_biclust) {
-    res <- .qubic_biclust(x = x, method = BCQUD(), c = c, o = o, f = f,
-                          k = k, type = type, P = P, C = C, verbose = verbose,
-                          weight = weight, seedbicluster = seedbicluster)
-  } else {
-    res <- qubiclust_d(x = x, c = c, o = o, f = f,
-                       k = k, type = type, P = P, C = C, verbose = verbose,
-                       weight = weight, seedbicluster = seedbicluster)
-  }
+  res <- qubiclust_d(x = x, c = c, o = o, f = f,
+                     k = k, type = type, P = P, C = C, verbose = verbose,
+                     weight = weight, seedbicluster = seedbicluster)
 
   res <- .qubic_set_result_call(res, match.call())
   return(res)

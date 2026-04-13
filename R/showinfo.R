@@ -7,14 +7,14 @@
 #' @return Text of report
 #' @examples
 #' # Load microarray matrix
-#' if (requireNamespace("biclust", quietly = TRUE) && methods::isClass("BCQU")) {
-#'   data(BicatYeast)
-#'   matrix <- BicatYeast[1:50, ];
-#'   res1 <- biclust::biclust(matrix, method=BCQU(), verbose = FALSE)
-#'   res2 <- biclust::biclust(matrix, method=BCCC())
-#'   res3 <- biclust::biclust(matrix, method=BCBimax())
+#' if (requireNamespace("QUBICdata", quietly = TRUE)) {
+#'   data(ecoli, package = "QUBICdata")
+#'   matrix <- ecoli[1:50, , drop = FALSE]
+#'   res1 <- qubiclust(matrix, verbose = FALSE)
+#'   res2 <- qubiclust(matrix, c = 0.9, verbose = FALSE)
+#'   res3 <- qubiclust(matrix, c = 0.85, verbose = FALSE)
 #'   # Show the report
-#'   showinfo(matrix, c(res1, res2, res3))
+#'   showinfo(matrix, list(res1, res2, res3))
 #' }
 #' @seealso \code{\link{QUBIC}}
 showinfo <- function(matrix, bic) {

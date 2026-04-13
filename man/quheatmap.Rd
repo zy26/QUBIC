@@ -28,6 +28,9 @@ quheatmap(
 
 \item{...}{Additional options in \code{fields::image.plot}}
 }
+\value{
+Invisibly returns \code{NULL} after drawing the heatmap.
+}
 \description{
 This function can visualize the identifed biclusters using heatmap in support of overall expression pattern analysis,either for a single bicluster or two biclusters.
 }

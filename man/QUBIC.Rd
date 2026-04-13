@@ -5,25 +5,23 @@
 \alias{qubic}
 \alias{BCQU}
 \alias{bcqu}
-\alias{biclust,matrix,BCQU-method}
 \alias{BCQUD-class}
 \alias{qubic_d}
 \alias{QUBICD}
 \alias{QUD}
-\alias{biclust,matrix,BCQUD-method}
 \alias{BCQUD}
 \alias{qubiclust_d}
 \alias{qubiclust}
 \title{QUBIC: A Qualitative Biclustering Algorithm for Analyses of Gene Expression Data}
 \usage{
-\S4method{biclust}{matrix,BCQU}(x, method = BCQU(),
+BCQU(x = NULL,
         r = 1, q = 0.06,
         c = 0.95, o = 100, f = 1,
         k = max(ncol(x) \%/\% 20, 2),
         type = 'default', P = FALSE, C = FALSE, verbose = TRUE,
         weight = NULL, seedbicluster = NULL)
 
-\S4method{biclust}{matrix,BCQUD}(x, method = BCQUD(),
+BCQUD(x = NULL,
         c = 0.95, o = 100, f = 1,
         k = max(ncol(x) \%/\% 20, 2),
         type = 'default', P = FALSE, C = FALSE, verbose = TRUE,
@@ -86,8 +84,6 @@ Only suggested to use when the input data has a few conditions (e.g. less than \
 
 \item{seedbicluster}{Seed provided by user, normally should be a result of
 \code{\link{qubiclust}}.}
-
-\item{method}{\code{BCQU()} or \code{BCQUD()}, to perform QUBIC algorithm}
 }
 \value{
 Returns a QUBIC biclustering result object (class

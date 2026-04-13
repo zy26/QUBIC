@@ -1,5 +1,4 @@
-# Internal compatibility layer for biclust-dependent operations.
-# Phase 2 skeleton introduces an internal result object and unified accessors.
+# Internal result helpers for QUBIC biclustering outputs.
 
 if (!methods::isClass("QUBICBiclustResult")) {
   methods::setClass(
@@ -12,17 +11,6 @@ if (!methods::isClass("QUBICBiclustResult")) {
       info = "list"
     )
   )
-}
-
-.qubic_has_biclust <- function() {
-  !isTRUE(getOption("qubic.disable.biclust", FALSE)) &&
-    requireNamespace("biclust", quietly = TRUE)
-}
-
-.qubic_require_biclust <- function() {
-  if (!.qubic_has_biclust()) {
-    stop("Package 'biclust' is required for this operation.", call. = FALSE)
-  }
 }
 
 .qubic_new_internal_result <- function(parameters, rowxnumber, numberxcol, number, info) {
@@ -82,18 +70,7 @@ if (!methods::isClass("QUBICBiclustResult")) {
   out
 }
 
-.qubic_biclust <- function(...) {
-  .qubic_require_biclust()
-  biclust::biclust(...)
-}
-
 .qubic_bicluster <- function(x, result, number = NULL) {
-  if (.qubic_has_biclust()) {
-    if (is.null(number)) {
-      return(biclust::bicluster(x, result))
-    }
-    return(biclust::bicluster(x, result, number))
-  }
   if (is.null(number)) {
     return(.qubic_extract_biclusters_internal(x, result))
   }
@@ -101,7 +78,6 @@ if (!methods::isClass("QUBICBiclustResult")) {
 }
 
 .qubic_new_BiclustResult <- function(parameters, rowxnumber, numberxcol, number, info) {
-  # Keep qubiclust() outputs in QUBIC's own result class regardless of biclust.
   .qubic_new_internal_result(parameters, rowxnumber, numberxcol, number, info)
 }
 
@@ -109,11 +85,7 @@ if (!methods::isClass("QUBICBiclustResult")) {
   total <- as.integer(.qubic_result_number(object))
   rowxnumber <- .qubic_result_rowxnumber(object)
   numberxcol <- .qubic_result_numberxcol(object)
-  class_label <- if (.qubic_is_internal_result(object)) {
-    "QUBICBiclustResult (biclust-compatible summary)"
-  } else {
-    "Biclust"
-  }
+  class_label <- "QUBICBiclustResult"
 
   call_expr <- .qubic_result_call(object)
   call_text <- if (is.null(call_expr)) "NULL" else paste(deparse(call_expr), collapse = "\n")
@@ -153,11 +125,7 @@ if (!methods::isClass("QUBICBiclustResult")) {
   total <- as.integer(.qubic_result_number(object))
   rowxnumber <- .qubic_result_rowxnumber(object)
   numberxcol <- .qubic_result_numberxcol(object)
-  class_label <- if (.qubic_is_internal_result(object)) {
-    "QUBICBiclustResult"
-  } else {
-    "Biclust"
-  }
+  class_label <- "QUBICBiclustResult"
 
   call_expr <- .qubic_result_call(object)
   call_text <- if (is.null(call_expr)) "NULL" else paste(deparse(call_expr), collapse = "\n")
